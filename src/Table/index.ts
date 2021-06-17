@@ -1,35 +1,22 @@
 import type { App } from 'vue'
-import { config, InstallOptions } from '../utils/config'
+import { objectDeepMerge } from '../utils/index'
 import ProTable from './Table.vue'
 import type {
-  ProDefineComponent,
-  ProTableColumn,
-  ProTableIndexColumns,
-  ProTableSelectionColumns,
-  ProTableExpandColumns,
-  ProTableMenuColumns,
-  ProPagination,
+  InstallOptions,
+  IDefineComponent,
+  ITableProps,
 } from '../types/index'
 
-ProTable.installl = (app: App, options?: InstallOptions) => {
-  const _options = Object.assign({}, config, options)
-
-  app.provide('ProTableOptions', _options)
+ProTable.install = (app: App, options?: InstallOptions) => {
+  if (options) {
+    const _before = app.config.globalProperties.$PROOPTIONS as InstallOptions
+    const _options = _before
+      ? objectDeepMerge<InstallOptions>(_before, options)
+      : options
+    app.config.globalProperties.$PROOPTIONS = _options
+  }
 
   app.component(ProTable.name || 'ProTable', ProTable)
 }
 
-export default ProTable as ProDefineComponent<{
-  selection: boolean | ProTableSelectionColumns
-  expand: boolean | ProTableExpandColumns
-  index: boolean | ProTableIndexColumns
-  menu: boolean | ProTableMenuColumns
-  columns: ProTableColumn
-  total?: number
-  pageSize?: number
-  currentPage?: number
-  pagination?: ProPagination
-  showOverflowTooltip?: boolean
-  align?: 'left' | 'center' | 'right'
-  headerAlign?: 'left' | 'center' | 'right'
-}>
+export default ProTable as IDefineComponent<ITableProps>

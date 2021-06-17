@@ -27,45 +27,61 @@
     <section class="pro-container">
       <pro-layout-header @toggle-collapse="toggleShow">
         <template #left>
+          <!-- TODO: remove slots `left-header` `right-header` `bottom-header` -->
           <slot name="left-header" />
+          <slot name="header-left" />
         </template>
         <template #right>
           <slot name="right-header" />
+          <slot name="header-right" />
         </template>
       </pro-layout-header>
       <slot name="bottom-header" />
-      <pro-layout-main :transition="transition" />
+      <slot name="header-bottom" />
+      <pro-layout-main :transition="transition">
+        <template #top>
+          <slot name="main-top" />
+        </template>
+        <template #bottom>
+          <slot name="main-bottom" />
+        </template>
+      </pro-layout-main>
+      <slot name="footer" />
     </section>
   </section>
 </template>
 
-<script setup lang="ts">
+<script setup name="ProLayout" lang="ts">
 import { defineProps, toRefs, useContext } from 'vue'
 import ProLayoutAside from './LayoutAside.vue'
 import ProLayoutHeader from './LayoutHeader.vue'
 import ProLayoutMain from './LayoutMain.vue'
-import { usrFilterAttrs, useShow } from '../composables/index'
+import { useAttrs, useShow } from '../composables/index'
 
 const props = defineProps<{
-  collapse: boolean
+  collapse?: boolean
   transition?: string
 }>()
 const { collapse, transition } = toRefs(props)
 const { slots } = useContext()
-const attrs = usrFilterAttrs()
-const { show, toggleShow } = useShow(collapse)
+const attrs = useAttrs()
+const { show, toggleShow } = useShow(collapse?.value)
 </script>
 
-<style>
+<style lang="postcss">
 .pro-layout {
   display: flex;
   height: var(--layout-height);
   overflow: hidden;
-}
-.pro-layout .pro-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: var(--c-page-background);
+  & .pro-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - var(--aside-width));
+    background: var(--c-page-background);
+  }
+  & .aside-collapse + .pro-container {
+    width: calc(100% - var(--aside-collapse-width));
+  }
 }
 </style>

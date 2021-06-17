@@ -1,27 +1,60 @@
 <template>
   <el-select
-    :model-value="modelValue"
+    v-model="modelValue"
     class="pro-select"
-    @change="upData"
   >
-    <el-option
+    <template
       v-for="item in data"
-      :key="item[selectConfig.value]"
-      :value="item[selectConfig.value]"
-      :label="item[selectConfig.label]"
-      :disabled="item[selectConfig.disabled]"
-    />
+      :key="item.value"
+    >
+      <el-option-group
+        v-if="item.children && item.children.length"
+        :key="item.label"
+        :label="item.label"
+      >
+        <el-option
+          v-for="cItem in item.children"
+          :key="cItem.value"
+          :label="cItem.label"
+          :value="cItem.value"
+          :disabled="cItem.disabled"
+        />
+      </el-option-group>
+      <el-option
+        v-else
+        :key="item.value"
+        :value="item.value"
+        :label="item.label"
+        :disabled="item.disabled"
+      />
+    </template>
   </el-select>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { ElSelect, ElOption } from 'element-plus'
-import { select } from '../mixins/index'
+<script setup name="ProSelect" lang="ts">
+import { defineEmit, defineProps } from 'vue'
+import { ElSelect, ElOptionGroup, ElOption } from 'element-plus'
+import { useVModel, useSelectData } from '../composables/index'
+import type { MaybeArray, UnknownObject, StringObject } from '../types/index'
 
-export default defineComponent({
-  name: 'ProSelect',
-  components: { ElSelect, ElOption },
-  mixins: [select],
-})
+const props = defineProps<{
+  modelValue?:
+    | string
+    | number
+    | boolean
+    | Record<string, unknown>
+    | Array<string | number | boolean | Record<string, unknown>>
+  data: Record<string, boolean | string | number | UnknownObject>[]
+  config?: {
+    value?: string
+    label?: string
+    disabled?: string
+    children?: string
+  }
+}>()
+const emit = defineEmit(['update:modelValue'])
+const modelValue = useVModel<
+  MaybeArray<string | number | boolean | StringObject>
+>(props)
+const data = useSelectData(props)
 </script>

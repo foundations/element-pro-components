@@ -1,72 +1,95 @@
-import { ComputedRef, computed, Ref, toRefs, unref, inject, ref } from 'vue'
-import { isObject } from '@vue/shared'
-import { config } from '../utils/config'
-import { filterSlotDeep } from '../utils/index'
+import { ComputedRef, computed, Ref, unref, ref } from 'vue'
+import { useProOptions } from './index'
+import {
+  filterFlat,
+  filterDeep,
+  isObject,
+  objectDeepMerge,
+} from '../utils/index'
 import type {
-  ProTableColumns,
-  ProTableColumnsProps,
-  ProTableExpose,
-  ProPagination,
+  TableColumn,
+  ITableColumns,
+  TableColumnsProps,
+  ITableExpose,
+  IPagination,
   UnknownObject,
+  StringObject,
+  DeepKeyof,
 } from '../types/index'
 
-export function useColumnsSlotList(
-  columns: ProTableColumns | Ref<ProTableColumns>
-): ComputedRef<ProTableColumns> {
-  const _columns = unref(columns)
-
-  return computed(() => {
-    return filterSlotDeep<ProTableColumns>(_columns).map((item) => {
-      item.header = item.prop + '-header'
-      return item
-    })
+export function useTableColumns(
+  props: Readonly<{ columns: ITableColumns }>
+): ComputedRef<ITableColumns> {
+  return computed<ITableColumns>(() => {
+    return filterDeep(props.columns || [], 'hide', false)
   })
 }
 
-export function useColumnsDefaultBind(
-  props: Readonly<ProTableColumnsProps>
-): ComputedRef<ProTableColumnsProps> {
-  const { showOverflowTooltip, align, headerAlign } = toRefs(props)
+interface TableSlot extends TableColumn {
+  header: string
+}
 
+export function useTableSlotList(
+  columns: ITableColumns | Ref<ITableColumns>
+): ComputedRef<TableSlot[]> {
+  return computed(() => {
+    const _columns = unref(columns)
+
+    return filterFlat<ITableColumns, TableSlot[]>(
+      _columns,
+      'slot',
+      true,
+      (item) => {
+        item.header = item.prop + '-header'
+        return item as TableSlot
+      }
+    )
+  })
+}
+
+export function useTableDefaultBind(
+  props: Readonly<TableColumnsProps>
+): ComputedRef<TableColumnsProps> {
   return computed(() => ({
-    showOverflowTooltip: showOverflowTooltip?.value || false,
-    align: align?.value,
-    headerAlign: headerAlign?.value,
+    showOverflowTooltip: props.showOverflowTooltip || false,
+    align: props.align,
+    headerAlign: props.headerAlign,
   }))
 }
 
-interface ColumnsBind {
+interface ColumnsBind extends StringObject {
   slot?: boolean
   children?: unknown
-  [key: string]: unknown
 }
 
-export function useColumnsBind<T extends ColumnsBind>(
-  currentBind: boolean | T | Ref<boolean | T>,
-  defaultBind?: ProTableColumnsProps | Ref<ProTableColumnsProps>
+export function useTableBind<T extends ColumnsBind>(
+  currentBind?: boolean | T | Ref<boolean | undefined | T>,
+  defaultBind?: TableColumnsProps | Ref<TableColumnsProps>
 ): ComputedRef<T> {
-  const _currentBind = unref(currentBind)
-  const _defaultBind = unref(defaultBind)
-  const _option = isObject(_currentBind) ? { ..._currentBind } : undefined
+  return computed(() => {
+    const _currentBind = unref(currentBind)
+    const _defaultBind = unref(defaultBind)
+    const _option = isObject(_currentBind) ? { ..._currentBind } : undefined
 
-  if (_option) {
-    _option.slot && (_option.slot = undefined)
-    _option.children && delete _option.children
-  }
+    if (_option) {
+      _option.slot && (_option.slot = undefined)
+      _option.children && delete _option.children
+    }
 
-  return computed(() => Object.assign({} as T, _defaultBind, _option))
+    return Object.assign({} as T, _defaultBind, _option)
+  })
 }
 
-export function useTableMethods(): {
-  table: Ref<ProTableExpose>
-} & ProTableExpose {
-  const table = ref<ProTableExpose>({} as ProTableExpose)
+export function useTableMethods<T = UnknownObject>(): {
+  table: Ref<ITableExpose<T>>
+} & ITableExpose<T> {
+  const table = ref<ITableExpose<T>>({} as ITableExpose<T>)
 
   function clearSelection() {
     table.value.clearSelection()
   }
 
-  function toggleRowSelection(row: UnknownObject, selected?: boolean) {
+  function toggleRowSelection(row: T, selected?: boolean) {
     table.value.toggleRowSelection(row, selected)
   }
 
@@ -74,11 +97,11 @@ export function useTableMethods(): {
     table.value.toggleAllSelection()
   }
 
-  function toggleRowExpansion(row: UnknownObject, expanded?: boolean) {
+  function toggleRowExpansion(row: T, expanded?: boolean) {
     table.value.toggleRowExpansion(row, expanded)
   }
 
-  function setCurrentRow(row?: UnknownObject) {
+  function setCurrentRow(row?: T) {
     table.value.setCurrentRow(row)
   }
 
@@ -86,7 +109,7 @@ export function useTableMethods(): {
     table.value.clearSort()
   }
 
-  function clearFilter(columnKeys?: string[]) {
+  function clearFilter(columnKeys?: DeepKeyof<T> | Array<DeepKeyof<T>>) {
     table.value.clearFilter(columnKeys)
   }
 
@@ -94,7 +117,7 @@ export function useTableMethods(): {
     table.value.doLayout()
   }
 
-  function sort(prop: string, order: string) {
+  function sort(prop: DeepKeyof<T>, order: string) {
     table.value.sort(prop, order)
   }
 
@@ -112,31 +135,8 @@ export function useTableMethods(): {
   }
 }
 
-export function usePaginationBind(
-  pagination: undefined | ProPagination | Ref<undefined | ProPagination>
-): ComputedRef<ProPagination> {
-  return computed(() => {
-    const _pagination = unref(pagination)
-
-    if (_pagination) {
-      return _pagination
-    } else {
-      const options = inject<{ pagination: ProPagination }>('ProOptions')
-
-      if (options) {
-        return options.pagination
-      } else {
-        const tableOptions = inject<{ pagination: ProPagination }>(
-          'ProTableOptions'
-        )
-
-        return tableOptions?.pagination || config.pagination
-      }
-    }
-  })
-}
-
-export function usePaginationEmit(
+export function usePagination(
+  props: Readonly<{ pagination?: IPagination }>,
   emit: (
     event:
       | 'update:currentPage'
@@ -148,27 +148,40 @@ export function usePaginationEmit(
     ...args: unknown[]
   ) => void
 ): {
+  pagination: ComputedRef<IPagination>
   sizeChange: (size: number) => void
   currentChange: (current: number) => void
   prevClick: (current: number) => void
   nextClick: (current: number) => void
 } {
+  const pagination = computed(() => {
+    const options = useProOptions()
+
+    return props.pagination
+      ? objectDeepMerge<IPagination>(options.pagination, props.pagination)
+      : options.pagination
+  })
+
   function sizeChange(size: number) {
     emit('update:pageSize', size)
     emit('size-change', size)
   }
+
   function currentChange(current: number) {
     emit('update:currentPage', current)
     emit('current-change', current)
   }
+
   function prevClick(current: number) {
     emit('current-change', current)
   }
+
   function nextClick(current: number) {
     emit('current-change', current)
   }
 
   return {
+    pagination,
     sizeChange,
     currentChange,
     prevClick,

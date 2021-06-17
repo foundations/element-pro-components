@@ -15,19 +15,27 @@
   </el-tabs>
 </template>
 
-<script setup lang="ts">
+<script setup name="ProTabs" lang="ts">
+import { useContext } from 'vue'
 import { ElTabs, ElTabPane } from 'element-plus'
 import { useTabs } from '../composables'
 
-const { active, list, to, close } = useTabs()
+const { expose } = useContext()
+const { active, list, to, close, closeOther } = useTabs()
+
+expose({
+  list,
+  close,
+  closeOther,
+})
 </script>
 
-<style>
+<style lang="postcss">
 .pro-tabs {
   padding: 0 20px;
   background: var(--c-tabs-background);
-}
-.pro-tabs .el-tabs__header {
-  margin: 0;
+  & .el-tabs__header {
+    margin: 0;
+  }
 }
 </style>

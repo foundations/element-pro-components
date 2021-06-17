@@ -11,9 +11,9 @@
     </template>
     <template #default="scope">
       <template v-if="item.children && item.children.length">
-        <table-item
+        <pro-table-item
           v-for="(child, index) in item.children"
-          :key="index"
+          :key="child.prop || index"
           :item="child"
         >
           <template
@@ -36,40 +36,48 @@
             <slot
               v-bind="childScope"
               :name="slot.prop"
-            >
-              {{ childScope.row[slot.prop] }}
-            </slot>
+            />
           </template>
-        </table-item>
+        </pro-table-item>
       </template>
       <template v-else-if="item.slot">
         <slot
           v-bind="scope"
           :name="item.prop"
         >
-          {{ scope.row[item.prop] }}
+          <pro-table-component
+            :row="scope.row"
+            :prop="item.prop"
+            :render="item.render"
+          />
         </slot>
       </template>
       <template v-else>
-        {{ scope.row[item.prop] }}
+        <pro-table-component
+          :row="scope.row"
+          :prop="item.prop"
+          :render="item.render"
+        />
       </template>
     </template>
   </el-table-column>
 </template>
 
-<script setup lang="ts">
+<script setup name="ProTableItem" lang="ts">
 import { defineProps, inject, toRefs } from 'vue'
 import { ElTableColumn } from 'element-plus'
-import { useColumnsBind, useColumnsSlotList } from '../composables'
+import { useTableBind, useTableSlotList } from '../composables'
+import ProTableItem from './TableItem.vue'
+import ProTableComponent from './TableComponent'
 import type {
-  ProTableColumn,
-  ProTableColumns,
-  ProTableColumnsProps,
+  TableColumn,
+  ITableColumns,
+  TableColumnsProps,
 } from '../types/index'
 
-const props = defineProps<{ item: Record<string, unknown> }>()
+const props = defineProps<{ item: TableColumn }>()
 const { item } = toRefs(props)
-const defaultBind = inject<ProTableColumnsProps>('defaultBind')
-const slotList = useColumnsSlotList(item.value.children as ProTableColumns)
-const bindColumn = useColumnsBind<ProTableColumn>(item, defaultBind)
+const defaultBind = inject<TableColumnsProps>('defaultBind')
+const slotList = useTableSlotList(item.value.children as ITableColumns)
+const bindColumn = useTableBind<TableColumn>(item, defaultBind)
 </script>

@@ -1,16 +1,41 @@
 import {
-  ComputedRef,
-  computed,
-  getCurrentInstance,
   onMounted,
   Ref,
   ref,
   onUnmounted,
   unref,
+  getCurrentInstance,
+  reactive,
+  watchEffect,
+  shallowRef,
+  computed,
+  WritableComputedRef,
 } from 'vue'
-import { useRouter } from 'vue-router'
-import { filterRouterByHidden } from '../utils/index'
-import type { ProRouteRecordRaw, UnknownObject } from '../types/index'
+import { useRouter, RouteRecordRaw } from 'vue-router'
+import { config } from '../utils/config'
+import {
+  getScreenSize,
+  addResizeListener,
+  removeResizeListener,
+  ResizableElement,
+  objectDeepMerge,
+} from '../utils/index'
+import type {
+  IRouteRecordRaw,
+  IScreenSize,
+  UnknownObject,
+  InstallOptions,
+} from '../types/index'
+
+/** get the global config */
+export function useProOptions(): Required<InstallOptions> {
+  const vm = getCurrentInstance()
+  const proxy = (vm?.proxy || {}) as { $PROOPTIONS: InstallOptions }
+
+  return '$PROOPTIONS' in proxy
+    ? objectDeepMerge<Required<InstallOptions>>(config, proxy.$PROOPTIONS)
+    : config
+}
 
 /**
  * toggle show
@@ -35,79 +60,26 @@ export function useShow(
   }
 }
 
-export function useHover(): {
-  isHover: Ref<boolean>
-  enter: () => void
-  leave: () => void
-} {
-  const isHover = ref(false)
-
-  function enter() {
-    isHover.value = true
-  }
-
-  function leave() {
-    isHover.value = false
-  }
-
-  return {
-    isHover,
-    enter,
-    leave,
-  }
-}
-
-/**
- * Monitor window scroll changes
- * @param callback callback function
- */
-export function useScroll(callback: () => void): void {
-  onMounted(() => {
-    window.addEventListener('scroll', callback)
-  })
-
-  onUnmounted(() => {
-    window.removeEventListener('scroll', callback)
-  })
-}
-
-/**
- * Monitor window size changes
- * @param callback callback function
- */
-export function useResize(callback: () => void): void {
-  onMounted(() => {
-    callback()
-    window.addEventListener('resize', callback)
-  })
-
-  onUnmounted(() => {
-    window.removeEventListener('resize', callback)
-  })
-}
-
-type ScreenSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-
 /** Gets the responsive breakpoint of the current screen */
-export function useScreenSize(): Ref<ScreenSize> {
-  const size = ref<ScreenSize>('xl')
+export function useScreenSize(): Ref<IScreenSize> {
+  const size = ref<IScreenSize>('xl')
+  const el = ref<ResizableElement>({} as ResizableElement)
 
-  useResize(getScreenSize)
+  onMounted(() => {
+    el.value = (document.getElementsByTagName(
+      'body'
+    )[0] as unknown) as ResizableElement
+    addResizeListener(el.value, setSize)
+    setSize()
+  })
 
-  function getScreenSize() {
-    const width = document.body.clientWidth
+  onUnmounted(() => {
+    removeResizeListener(el.value, setSize)
+  })
 
-    if (width >= 1920) {
-      size.value = 'xl'
-    } else if (width >= 1200) {
-      size.value = 'lg'
-    } else if (width >= 992) {
-      size.value = 'md'
-    } else if (width >= 768) {
-      size.value = 'sm'
-    } else {
-      size.value = 'xs'
-    }
+  function setSize() {
+    if (!el.value) return
+    size.value = getScreenSize(el.value.clientWidth)
   }
 
   return size
@@ -119,40 +91,73 @@ export function useScreenSize(): Ref<ScreenSize> {
  */
 export function useCurrentRoutes(
   props: Readonly<{
-    routes?: ProRouteRecordRaw[]
+    routes?: IRouteRecordRaw[]
   }>
-): ComputedRef<ProRouteRecordRaw[]> {
-  return computed(() => {
-    if (props.routes && props.routes.length) {
-      return props.routes
-    } else {
-      const router = useRouter()
-      const _routes = router.options.routes as ProRouteRecordRaw[]
+): Ref<IRouteRecordRaw[]> {
+  if (props.routes && props.routes.length) {
+    return ref<IRouteRecordRaw[]>(props.routes) as Ref<IRouteRecordRaw[]>
+  } else {
+    const router = useRouter()
+    router.options.routes = reactive<RouteRecordRaw[]>(
+      router.options.routes
+    ) as IRouteRecordRaw[]
+    const routes = ref<IRouteRecordRaw[]>([] as IRouteRecordRaw[])
 
-      return filterRouterByHidden(_routes)
-    }
-  })
+    watchEffect(() => {
+      routes.value = router.options.routes
+    })
+
+    return routes as Ref<IRouteRecordRaw[]>
+  }
 }
 
 /**
  * exclusion `class` `style` for attrs
  * @param excludeKeys Additional exclusion value
  */
-export function usrFilterAttrs(
-  excludeKeys: string[] = []
-): ComputedRef<UnknownObject> {
+export function useAttrs(excludeKeys: string[] = []): Ref<UnknownObject> {
   const instance = getCurrentInstance() || { attrs: {} }
+  const attrs = shallowRef({})
   const exclude = excludeKeys.concat(['class', 'style'])
 
-  return computed(() => {
-    const attrs = { ...instance.attrs }
+  instance.attrs = reactive(instance.attrs)
+
+  watchEffect(() => {
+    const _attrs = { ...instance.attrs }
 
     exclude.forEach((item: string) => {
-      if (item in attrs) {
-        attrs[item] = undefined
+      if (item in _attrs) {
+        _attrs[item] = undefined
       }
     })
 
-    return attrs
+    attrs.value = _attrs
+  })
+
+  return attrs
+}
+
+/**
+ * bind model value
+ * @param props value props
+ * @param key value key
+ * @param defaultValue config the default value
+ * @param emit update function
+ */
+export function useVModel<T>(
+  props: Readonly<UnknownObject>,
+  key = 'modelValue',
+  defaultValue?: T,
+  emit?: (name: string, ...args: unknown[]) => void
+): WritableComputedRef<T | undefined> {
+  const instance = getCurrentInstance()
+  const _emit = emit || instance?.emit
+  return computed<T | undefined>({
+    get() {
+      return (props[key] as T) || defaultValue
+    },
+    set(value) {
+      _emit && _emit(`update:${key}`, value)
+    },
   })
 }

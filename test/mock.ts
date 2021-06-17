@@ -1,4 +1,4 @@
-import type { ProRouteRecordRaw } from '../src/types/index'
+import type { IRouteRecordRaw } from '../src/types/index'
 
 export interface DicItem {
   value: string
@@ -14,7 +14,57 @@ export const dicList: DicItem[] = [
   { value: 'V', label: 'v' },
 ]
 
-export const routes: ProRouteRecordRaw[] = [
+export interface TableItem {
+  date: string
+  name: string
+  address: string
+}
+
+export const tableData: TableItem[] = [
+  {
+    date: '2016-05-03',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-02',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-04',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-01',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+]
+
+export interface SlotItem {
+  slot?: boolean
+  label: string
+  children?: SlotItem[]
+  [key: string]: unknown
+}
+
+export const slotList: SlotItem[] = [
+  { slot: true, label: 'label1' },
+  { label: 'label2' },
+  {
+    slot: true,
+    label: 'label3',
+    children: [{ slot: true, label: 'label4' }, { label: 'label5' }],
+  },
+  {
+    label: 'label6',
+    children: [{ slot: true, label: 'label7' }, { label: 'label8' }],
+  },
+]
+
+export const routes: IRouteRecordRaw[] = [
   {
     path: '/',
     redirect: '/index',

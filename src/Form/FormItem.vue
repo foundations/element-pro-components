@@ -1,7 +1,9 @@
 <template>
   <el-form-item
     v-bind="bindItem"
-    :prop="prop"
+    :prop="hasChild ? undefined : prop"
+    :style="!inline ? colStyle : undefined"
+    :class="!inline && colClass"
     class="pro-form-item"
   >
     <template
@@ -24,17 +26,20 @@
       />
     </template>
     <template #default>
-      <template v-if="item.children && item.children.length">
+      <template v-if="hasChild">
         <div
           v-for="(value, index) in modelValue[item.prop]"
           :key="index"
           class="children-form"
         >
-          <div class="children-form-item">
-            <form-item
+          <div
+            :class="!inline && 'el-row'"
+            class="children-form-item"
+          >
+            <pro-form-item
               v-for="child in item.children"
-              :key="child.prop"
-              :model-value="modelValue[item.prop][index]"
+              :key="`${prop}.${index}.${child.prop}`"
+              :model-value="value"
               :item="child"
               :prop="`${prop}.${index}.${child.prop}`"
               @update:modelValue="(value) => upChildData(value, index)"
@@ -69,7 +74,7 @@
                   :name="slot.prop"
                 />
               </template>
-            </form-item>
+            </pro-form-item>
           </div>
           <el-button
             icon="el-icon-minus"
@@ -80,9 +85,7 @@
           />
         </div>
         <el-button
-          v-if="
-            item.max ? item.max > (modelValue[item.prop]?.length || 0) : true
-          "
+          v-if="showAddBtn"
           icon="el-icon-plus"
           type="primary"
           circle
@@ -116,27 +119,34 @@
   </el-form-item>
 </template>
 
-<script setup lang="ts">
+<script setup name="ProFormItem" lang="ts">
 import { defineProps, toRefs, defineEmit } from 'vue'
 import { ElFormItem, ElButton } from 'element-plus'
 import {
   useFormSlotList,
   useFormItemBind,
   useFormChild,
+  useCol,
 } from '../composables/index'
-import ProFormComponent from './FormCompont.vue'
-import type { ProFormColumn, ProFormColumns } from '../types/index'
+import ProFormItem from './FormItem.vue'
+import ProFormComponent from './FormComponent'
+import type { FormColumn, IFormColumns } from '../types/index'
 
 const props = defineProps<{
-  item: Record<string, unknown> & ProFormColumn
+  item: Record<string, unknown> & FormColumn
   prop: string
   modelValue: Record<string, unknown>
+  inline?: boolean
 }>()
 const emit = defineEmit(['update:modelValue'])
-const { item, prop, modelValue } = toRefs(props)
-const slotList = useFormSlotList(item.value.children as ProFormColumns)
+const { item, prop, modelValue, inline } = toRefs(props)
+const slotList = useFormSlotList(item.value.children as IFormColumns)
 const bindItem = useFormItemBind(item)
-const { add, del, upChildData } = useFormChild(props, emit)
+const { hasChild, showAddBtn, add, del, upChildData } = useFormChild(
+  props,
+  emit
+)
+const { colStyle, colClass } = useCol(item)
 
 function upData(value: unknown) {
   const _model = { ...modelValue.value }
@@ -145,21 +155,27 @@ function upData(value: unknown) {
 }
 </script>
 
-<style>
+<style lang="postcss">
 .pro-form-item .children-form {
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  padding-top: 15px;
   width: 100%;
-}
-.pro-form-item .children-form .children-form-item {
-  flex: 1;
-}
-.pro-form-item .children-form .children-form-item .pro-form-item {
-  margin-bottom: 22px;
-}
-.pro-form-item .children-form .delete-bth {
-  margin: 0 0 20px 10px;
+  border-top: 1px dashed var(--c-border);
+  &:first-child {
+    padding-top: 0;
+    border-top-width: 0;
+  }
+  & .children-form-item {
+    flex: 1;
+    & .pro-form-item {
+      margin-bottom: 22px;
+    }
+  }
+  & .delete-bth {
+    margin: 0 0 20px 10px;
+  }
 }
 </style>

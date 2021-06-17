@@ -1,35 +1,8 @@
-# element-pro-components (WIP)
+# element-pro-components (Beta)
 
 > a component library for Vue 3 base on element-plus
 
-[Documentation](https://tolking.github.io/element-pro-components)
-
-## TODO:
-
-- components
-
-  - [x] ProLayout
-  - [x] ProMenu
-  - [x] ProBreadcrumb
-  - [x] ProTabs
-  - [x] ProTable
-  - [x] ProForm
-  - [x] ProInputTag
-  - [x] ProRadio
-  - [x] ProRadioButton
-  - [x] ProCheckbox
-  - [x] ProCheckboxButton
-  - [x] ProSelect
-  - [ ] ProSerach
-  - [ ] ProList
-  - [ ] ProCrud
-  - [ ] ProUpload
-  - ...
-
-- [x] docs
-- [x] test
-- [x] vetur
-- ...
+[Documentation](https://tolking.github.io/element-pro-components) | [Changelog](./CHANGELOG.md)
 
 ## Installation
 
@@ -45,7 +18,7 @@ npm i element-pro-components
 import { createApp } from 'vue'
 import App from './App.vue'
 import ElementPro from 'element-pro-components'
-import 'element-pro-components/lib/index.min.css'
+import 'element-pro-components/lib/style.css'
 
 createApp(App).use(ElementPro).mount('#app')
 ```
@@ -55,6 +28,34 @@ createApp(App).use(ElementPro).mount('#app')
   <pro-layout />
 </template>
 ```
+
+## Development project
+
+nodejs ^12
+
+start
+
+```bash
+yarn
+
+yarn dev
+```
+
+then, preview on `http://localhost:3000/`
+
+test build
+
+```bash
+yarn build
+```
+
+before push
+
+```bash
+yarn test
+```
+
+[commit-convention](https://github.com/vuejs/vue-next/blob/master/.github/commit-convention.md)
 
 ## License
 

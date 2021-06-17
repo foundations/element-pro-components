@@ -37,21 +37,17 @@
   </aside>
 </template>
 
-<script setup lang="ts">
+<script setup name="ProLayoutAside" lang="ts">
 import { toRefs, defineEmit, defineProps, useContext, computed } from 'vue'
 import { ElScrollbar } from 'element-plus'
+import { useAttrs, useScreenSize } from '../composables/index'
 import ProMenu from '../Menu/index'
-import { usrFilterAttrs, useScreenSize } from '../composables/index'
-import type { ProRouteRecordRaw } from '../types/index'
 
-const props = defineProps<{
-  collapse: boolean
-  routes?: ProRouteRecordRaw[]
-}>()
-const { collapse, routes } = toRefs(props)
+const props = defineProps<{ collapse: boolean }>()
+const { collapse } = toRefs(props)
 const emit = defineEmit(['toggle-collapse'])
 const { slots } = useContext()
-const attrs = usrFilterAttrs()
+const attrs = useAttrs()
 const size = useScreenSize()
 const menuCollapse = computed(() => {
   return size.value === 'xs' ? false : collapse.value
@@ -62,67 +58,69 @@ function toggleCollapse() {
 }
 </script>
 
-<style>
-.pro-aside .mask {
-  display: none;
-}
-.pro-aside .pro-aside-wrapper {
-  position: relative;
-  width: var(--aside-width);
-  height: 100%;
-  border-right: 1px solid var(--c-border);
-  background: var(--c-aside-background);
-  transition: width var(--t-duration) var(--t-timing-function);
-}
-.pro-aside.aside-collapse .pro-aside-wrapper {
-  width: 60px;
-}
-.pro-aside .pro-aside-wrapper .el-scrollbar .el-scrollbar__wrap {
-  overflow-x: hidden;
-}
-.pro-aside .pro-menu {
-  min-height: calc(var(--layout-height) - var(--header-height));
-}
-.pro-aside .pro-aside-logo {
-  padding-left: 20px;
-  height: var(--header-height);
-  border-bottom: 1px solid var(--c-border);
-  background: var(--c-aside-background);
-  overflow: hidden;
-}
-@media screen and (max-width: 768px) {
-  .pro-aside {
+<style lang="postcss">
+.pro-aside {
+  & .mask {
+    display: none;
+  }
+  & .pro-aside-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: var(--aside-width);
+    height: 100%;
+    border-right: 1px solid var(--c-border);
+    background: var(--c-aside-background);
+    transition: width var(--t-duration) var(--t-timing-function);
+    & .pro-aside-logo {
+      padding-left: 20px;
+      height: var(--header-height);
+      min-height: var(--header-height);
+      border-bottom: 1px solid var(--c-border);
+      background: var(--c-aside-background);
+      overflow: hidden;
+    }
+    & .el-scrollbar {
+      flex: 1;
+      & .el-scrollbar__wrap {
+        overflow-x: hidden;
+      }
+    }
+  }
+  &.aside-collapse .pro-aside-wrapper {
+    width: var(--aside-collapse-width);
+  }
+  @media (--xs-medium) {
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
     width: 0;
     z-index: var(--z-index-sidebar);
-  }
-  .pro-aside.aside-collapse {
-    width: 100%;
-  }
-  .pro-aside .mask {
-    display: block;
-    position: absolute;
-    opacity: 0;
-    transition: opacity var(--t-duration) var(--t-timing-function);
-  }
-  .pro-aside.aside-collapse .mask {
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--c-mask-background);
-    opacity: 1;
-  }
-  .pro-aside .pro-aside-wrapper {
-    transform: translateX(-100%);
-    transition: transform var(--t-duration) var(--t-timing-function);
-  }
-  .pro-aside.aside-collapse .pro-aside-wrapper {
-    width: var(--aside-width);
-    transform: translateX(0);
+    &.aside-collapse {
+      width: 100%;
+    }
+    & .mask {
+      display: block;
+      position: absolute;
+      opacity: 0;
+      transition: opacity var(--t-duration) var(--t-timing-function);
+    }
+    &.aside-collapse .mask {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--c-mask-background);
+      opacity: 1;
+    }
+    & .pro-aside-wrapper {
+      transform: translateX(-100%);
+      transition: transform var(--t-duration) var(--t-timing-function);
+    }
+    &.aside-collapse .pro-aside-wrapper {
+      width: var(--aside-width);
+      transform: translateX(0);
+    }
   }
 }
 </style>

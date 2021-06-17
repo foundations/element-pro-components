@@ -1,29 +1,36 @@
 <template>
   <el-radio-group
-    :model-value="modelValue"
+    v-model="modelValue"
     class="pro-radio-button"
-    @change="upData"
   >
     <el-radio-button
       v-for="item in data"
-      :key="item[selectConfig.value]"
-      :name="item[selectConfig.name]"
-      :label="item[selectConfig.value]"
-      :disabled="item[selectConfig.disabled]"
+      :key="item.value"
+      :name="item.name"
+      :label="item.value"
+      :disabled="item.disabled"
     >
-      {{ item[selectConfig.label] }}
+      {{ item.label }}
     </el-radio-button>
   </el-radio-group>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup name="ProRadioButton" lang="ts">
+import { defineEmit, defineProps } from 'vue'
 import { ElRadioGroup, ElRadioButton } from 'element-plus'
-import { select } from '../mixins/index'
+import { useVModel, useSelectData } from '../composables/index'
 
-export default defineComponent({
-  name: 'ProRadioButton',
-  components: { ElRadioGroup, ElRadioButton },
-  mixins: [select],
-})
+const props = defineProps<{
+  modelValue?: string | number | boolean
+  data: Record<string, boolean | string | number>[]
+  config?: {
+    value?: string
+    label?: string
+    name?: string
+    disabled?: string
+  }
+}>()
+const emit = defineEmit(['update:modelValue'])
+const modelValue = useVModel<string | number | boolean>(props)
+const data = useSelectData(props)
 </script>

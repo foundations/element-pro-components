@@ -1,41 +1,44 @@
 import path from 'path'
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import babel from 'rollup-plugin-babel'
 import { name } from './package.json'
+import plugins from './docs/src/plugin/common-plugins'
 
-// Gets the components name and converts it to camelize
-const pluginName = name.replace(/(^|-)(\w)/g, (a, b, c) => c.toUpperCase())
+const camelize = (name: string) =>
+  name.replace(/(^|-)(\w)/g, (a, b, c) => c.toUpperCase())
 
-/**
- * type {import('vite').UserConfig}
- */
 export default defineConfig({
-  root: path.resolve(__dirname, 'example'),
-  alias: {
-    '/@src': path.resolve(__dirname, 'src'),
+  root: path.resolve(__dirname, 'docs'),
+  resolve: {
+    alias: {
+      '/@src': path.resolve(__dirname, 'src'),
+    },
   },
   build: {
     target: 'es2015',
     outDir: path.resolve(__dirname, 'lib'),
-    cssCodeSplit: true,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: pluginName,
+      name: camelize(name),
     },
     rollupOptions: {
       output: {
         exports: 'named',
+        globals: (id: string) => {
+          const name = id.replace(/^@/, '').split('/')[0]
+          return camelize(name)
+        },
       },
-      external: ['vue', 'vue-router', '@vue/shared', 'element-plus'],
+      external: (id: string) =>
+        /^(vue|@vue|element-plus|resize-observer-polyfill)/.test(id),
       plugins: [
         babel({
           exclude: 'node_modules/**',
           extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
-          presets: [['@babel/preset-env']],
+          presets: ['@babel/preset-env', '@babel/preset-typescript'],
         }),
       ],
     },
   },
-  plugins: [vue()],
+  plugins,
 })

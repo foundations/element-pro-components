@@ -1,15 +1,16 @@
-export * from './composables/public'
+export * from './composables/index'
 export * from './utils/index'
 export * from './types/index'
 import './styles/index.css'
 import type { App } from 'vue'
-import { ProDefineComponent } from './types/index'
-import { config, InstallOptions } from './utils/config'
+import type { IDefineComponent, InstallOptions } from './types/index'
 
 import ProAutocompleteTag from './AutocompleteTag/index'
 import ProBreadcrumb from './Breadcrumb/index'
 import ProCheckbox from './Checkbox/index'
 import ProCheckboxButton from './CheckboxButton/index'
+import ProColumnSetting from './ColumnSetting/index'
+import ProCrud from './Crud/index'
 import ProForm from './Form/index'
 import ProInputTag from './InputTag/index'
 import ProLayout from './Layout/index'
@@ -20,11 +21,13 @@ import ProSelect from './Select/index'
 import ProTable from './Table/index'
 import ProTabs from './Tabs/index'
 
-const components: Record<string, ProDefineComponent> = {
+const components: Record<string, IDefineComponent> = {
   ProAutocompleteTag,
   ProBreadcrumb,
   ProCheckbox,
   ProCheckboxButton,
+  ProColumnSetting,
+  ProCrud,
   ProForm,
   ProInputTag,
   ProLayout,
@@ -37,9 +40,7 @@ const components: Record<string, ProDefineComponent> = {
 }
 
 const install = (app: App, options?: InstallOptions): void => {
-  const _options = Object.assign({}, config, options)
-
-  app.provide('ProOptions', _options)
+  options && (app.config.globalProperties.$PROOPTIONS = options)
 
   for (const key in components) {
     const item = components[key]
@@ -52,6 +53,8 @@ export {
   ProBreadcrumb,
   ProCheckbox,
   ProCheckboxButton,
+  ProColumnSetting,
+  ProCrud,
   ProForm,
   ProInputTag,
   ProLayout,
@@ -64,6 +67,4 @@ export {
   install,
 }
 
-export default {
-  install,
-}
+export default { install }

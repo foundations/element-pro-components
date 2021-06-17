@@ -39,9 +39,7 @@
         <slot
           v-bind="scope"
           :name="slot.header"
-        >
-          {{ scope.column.label }}
-        </slot>
+        />
       </template>
       <template
         v-for="slot in slotList"
@@ -51,9 +49,8 @@
         <slot
           v-bind="scope"
           :name="slot.prop"
-        >
-          {{ scope.row[slot.prop] }}
-        </slot>
+          :size="attrs.size"
+        />
       </template>
     </pro-table-item>
     <slot />
@@ -76,7 +73,7 @@
   </el-table>
   <el-pagination
     v-if="total"
-    v-bind="bindPagination"
+    v-bind="pagination"
     :current-page="currentPage"
     :page-size="pageSize"
     :total="total"
@@ -88,32 +85,32 @@
   />
 </template>
 
-<script setup lang="ts">
+<script setup name="ProTable" lang="ts">
 import { defineProps, provide, toRefs, useContext, defineEmit } from 'vue'
 import { ElTable, ElTableColumn, ElPagination } from 'element-plus'
 import {
-  useColumnsBind,
-  useColumnsDefaultBind,
-  useColumnsSlotList,
+  useTableColumns,
+  useTableBind,
+  useTableDefaultBind,
+  useTableSlotList,
   useTableMethods,
-  usePaginationBind,
-  usePaginationEmit,
+  usePagination,
 } from '../composables'
 import ProTableItem from './TableItem.vue'
 import type {
-  ProTableColumn,
-  ProTableSelectionColumns,
-  ProTableExpandColumns,
-  ProTableIndexColumns,
-  ProTableMenuColumns,
+  TableColumn,
+  ITableSelectionColumns,
+  ITableExpandColumns,
+  ITableIndexColumns,
+  ITableMenuColumns,
 } from '../types/index'
 
 const props = defineProps<{
-  selection: boolean | Record<string, unknown>
-  expand: boolean | Record<string, unknown>
-  index: boolean | Record<string, unknown>
-  menu: boolean | Record<string, unknown>
-  columns: Array<Record<string, unknown> & ProTableColumn>
+  selection?: boolean | Record<string, unknown>
+  expand?: boolean | Record<string, unknown>
+  index?: boolean | Record<string, unknown>
+  menu?: boolean | Record<string, unknown>
+  columns: Array<Record<string, unknown> & TableColumn>
   total?: number
   pageSize?: number
   currentPage?: number
@@ -131,27 +128,26 @@ const emit = defineEmit([
   'next-click',
 ])
 const { attrs, expose } = useContext()
-const {
-  selection,
-  expand,
-  index,
-  menu,
-  columns,
-  total,
-  pageSize,
-  currentPage,
-  pagination,
-} = toRefs(props)
-const slotList = useColumnsSlotList(columns)
-const defaultBind = useColumnsDefaultBind(props)
-const bindSelection = useColumnsBind<ProTableSelectionColumns>(
+const { selection, expand, index, menu, total, pageSize, currentPage } = toRefs(
+  props
+)
+const columns = useTableColumns(props)
+const slotList = useTableSlotList(columns)
+const defaultBind = useTableDefaultBind(props)
+const bindSelection = useTableBind<ITableSelectionColumns>(
   selection,
   defaultBind
 )
-const bindExpand = useColumnsBind<ProTableExpandColumns>(expand, defaultBind)
-const bindIndex = useColumnsBind<ProTableIndexColumns>(index, defaultBind)
-const bindMenu = useColumnsBind<ProTableMenuColumns>(menu, defaultBind)
-const bindPagination = usePaginationBind(pagination)
+const bindExpand = useTableBind<ITableExpandColumns>(expand, defaultBind)
+const bindIndex = useTableBind<ITableIndexColumns>(index, defaultBind)
+const bindMenu = useTableBind<ITableMenuColumns>(menu, defaultBind)
+const {
+  pagination,
+  sizeChange,
+  currentChange,
+  prevClick,
+  nextClick,
+} = usePagination(props, emit)
 const {
   table,
   clearSelection,
@@ -164,9 +160,6 @@ const {
   doLayout,
   sort,
 } = useTableMethods()
-const { sizeChange, currentChange, prevClick, nextClick } = usePaginationEmit(
-  emit
-)
 
 provide('defaultBind', defaultBind)
 
@@ -183,9 +176,10 @@ expose({
 })
 </script>
 
-<style>
+<style lang="postcss">
 .pro-table + .pro-pagination {
   padding: 15px 0;
+  overflow: scroll hidden;
   text-align: right;
 }
 </style>

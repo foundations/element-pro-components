@@ -1,3 +1,5 @@
+@custom-media --xs-medium (width < 768px);
+
 :root {
   /* color */
   --c-background: #ffffff;
@@ -10,10 +12,15 @@
 
   /* size */
   --aside-width: 240px;
+  --aside-collapse-width: 60px;
   --layout-height: 100vh;
   --header-height: 54px;
   --footer-height: 50px;
   --border-radius: 4px;
+  --main-margin: 10px;
+  --main-padding: 20px;
+  --xs-main-margin: 4px;
+  --xs-main-padding: 10px;
 
   /* z-index */
   --z-index-sidebar: 100;
