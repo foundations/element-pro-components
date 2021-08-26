@@ -1,13 +1,13 @@
 import type { VNode } from 'vue'
 import type {
-  UnknownObject,
   UnknownFunction,
   IPlacementType,
   StringObject,
   DeepKeyof,
+  MaybeArray,
 } from './index'
 
-export interface ITableProps<T = UnknownObject> extends TableColumnsProps {
+export interface ITableProps<T = StringObject> extends TableColumnsProps {
   selection: boolean | ITableSelectionColumns<T>
   expand: boolean | ITableExpandColumns
   index: boolean | ITableIndexColumns
@@ -29,7 +29,7 @@ export interface TableColumnsProps {
   headerAlign?: 'left' | 'center' | 'right'
 }
 
-interface TableCommonColumn<T = UnknownObject>
+interface TableCommonColumn<T = StringObject>
   extends StringObject,
     TableColumnsProps {
   /** column label */
@@ -71,7 +71,7 @@ interface TableCommonColumn<T = UnknownObject>
 }
 
 /** Table Column Options (T: type about `prop`, Q: type about `row`) */
-export interface TableColumn<T = UnknownObject, Q = T>
+export interface TableColumn<T = StringObject, Q = T>
   extends TableCommonColumn<Q> {
   /** field name */
   prop: DeepKeyof<T>
@@ -86,7 +86,7 @@ export interface TableColumn<T = UnknownObject, Q = T>
 }
 
 /** Table Columns Options */
-export type ITableColumns<T = UnknownObject> = TableColumn<T>[]
+export type ITableColumns<T = StringObject> = TableColumn<T>[]
 
 /** Table Expand Options */
 export type ITableExpandColumns = TableCommonColumn
@@ -101,7 +101,7 @@ export interface ITableIndexColumns extends TableCommonColumn {
 }
 
 /** Table Selection Columns Options */
-export interface ITableSelectionColumns<T = UnknownObject>
+export interface ITableSelectionColumns<T = StringObject>
   extends TableCommonColumn<T> {
   /** function that determines if a certain row can be selected */
   selectable?: (row: T, index: number) => unknown
@@ -110,7 +110,7 @@ export interface ITableSelectionColumns<T = UnknownObject>
 }
 
 /** Table Expose Methods */
-export interface ITableExpose<T = UnknownObject> {
+export interface ITableExpose<T = StringObject> {
   /** used in multiple selection Table, clear user selection */
   clearSelection: () => void
   /** used in multiple selection Table, toggle if a certain row is selected. With the second parameter, you can directly set if this row is selected */
@@ -124,7 +124,7 @@ export interface ITableExpose<T = UnknownObject> {
   /** clear sorting, restore data to the original order */
   clearSort: () => void
   /** clear filters of the columns whose columnKey are passed in. If no params, clear all filters */
-  clearFilter: (columnKeys?: DeepKeyof<T> | Array<DeepKeyof<T>>) => void
+  clearFilter: (columnKeys?: MaybeArray<DeepKeyof<T>>) => void
   /** refresh the layout of Table. When the visibility of Table changes, you may need to call this method to get a correct layout */
   doLayout: () => void
   /** sort Table manually. Property prop is used to set sort column, property order is used to set sort order */

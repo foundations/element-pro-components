@@ -1,3 +1,10 @@
+---
+title: 路由和菜单
+meta:
+  - name: description
+    content: 如何配置 element-pro-components 组件库的路由和菜单
+---
+
 # 路由和菜单
 
 默认情况下，布局相关的组件会自动从 `vue-router` 中获取所需要的路由信息
@@ -18,6 +25,39 @@ interface IRouteMeta extends RouteMeta {
 参考路由
 
 <<< @/docs/src/router/dev.ts
+
+### 使用 icon
+
+组件库内部直接将 icon 渲染成一个组件，所以你可以定义为任意图标组件。如：`@element-plus/icons` 图标组件
+
+#### 使用 @element-plus/icons
+
+- 安装
+
+```
+yarn add @element-plus/icons
+# 或者
+npm install @element-plus/icons
+```
+
+- **全局注册**需要图标组件
+
+```js
+import { Edit, House, TakeawayBox } from '@element-plus/icons'
+
+app.component(Edit.name, Edit)
+```
+
+- 定义路由 icon
+
+```js
+{
+  name: 'admin',
+  path: '/admin',
+  component: Layout,
+  meta: { title: 'Admin', icon: 'edit' },
+}
+```
 
 ## 异步路由
 

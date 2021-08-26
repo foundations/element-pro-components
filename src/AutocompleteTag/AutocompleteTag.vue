@@ -1,5 +1,5 @@
 <template>
-  <div class="pro-autocomplete-tag pro-input-tag">
+  <div class="pro-autocomplete-tag">
     <el-tag
       v-for="(item, index) in list"
       :key="index"
@@ -24,8 +24,12 @@
   </div>
 </template>
 
-<script setup name="ProAutocompleteTag" lang="ts">
-import { toRefs, defineEmit, defineProps } from 'vue'
+<script lang="ts">
+export default { name: 'ProAutocompleteTag' }
+</script>
+
+<script setup lang="ts">
+import { toRefs } from 'vue'
 import { ElTag, ElAutocomplete } from 'element-plus'
 import { useInputTag, useFormSize, useAttrs } from '../composables/index'
 
@@ -38,30 +42,9 @@ const props = defineProps<{
   color?: string
   effect?: 'light' | 'dark' | 'plain'
 }>()
-const emit = defineEmit(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
 const { type, hit, color, effect } = toRefs(props)
 const attrs = useAttrs()
 const size = useFormSize(props)
 const { input, list, add, close, keyup } = useInputTag(props, emit)
 </script>
-
-<style lang="postcss">
-.pro-input-tag {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  border: 1px solid var(--c-border);
-  border-radius: 4px;
-  background-color: var(--c-background);
-  & .el-tag {
-    margin: 3px;
-  }
-  & .el-autocomplete {
-    flex: 1;
-    min-width: 80px;
-  }
-  & .el-input .el-input__inner {
-    border: 0;
-  }
-}
-</style>

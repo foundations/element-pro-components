@@ -1,3 +1,10 @@
+---
+title: 自定义主题
+meta:
+  - name: description
+    content: 如何自定义 element-pro-components 组件库的主题
+---
+
 # 自定义主题
 
 ::: tip 提示
@@ -9,6 +16,8 @@
 :::
 
 ::: warning 警告
+TODO: 由于 `Element Plus` 内部开始使用 css-variables，所以这部分内容将在接下来重构
+
 这样配置目前只适用于组件内部，不能够修改 `Element Plus` 内部的样式。如果需要同时控制两者可以
 
 ```scss
@@ -17,7 +26,6 @@ $--background-color-base: var(--c-page-background);
 /* ... */
 ```
 
-TODO: 未来可能会提供配置好的 scss 文件或者是转化好的 css 文件
 :::
 
 ## 简单配置
@@ -75,7 +83,7 @@ html[theme='other'] {
 在入口文件中引入你的样式配置文件
 
 ```js
-import 'element-pro-components/lib/style.css'
+import 'element-pro-components/lib/styles/index.css'
 import 'your/css/file'
 ```
 
@@ -85,4 +93,4 @@ import 'your/css/file'
 
 ## 提供配置的参数
 
-<<< @/src/styles/index.css
+<<< @/src/styles/vars.css

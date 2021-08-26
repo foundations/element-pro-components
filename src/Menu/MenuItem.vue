@@ -13,7 +13,7 @@
       v-if="item.meta?.icon || item.meta?.title"
       #title
     >
-      <slot v-bind="item" />
+      <slot :meta="item.meta" />
     </template>
     <template
       v-for="child in item.children"
@@ -26,10 +26,13 @@
   </el-submenu>
 </template>
 
-<script setup name="ProMenuItem" lang="ts">
-import { computed, defineProps } from 'vue'
+<script lang="ts">
+export default { name: 'ProMenuItem' }
+</script>
+
+<script setup lang="ts">
+import { computed } from 'vue'
 import { ElMenuItem, ElSubmenu } from 'element-plus'
-import MenuItem from './MenuItem.vue'
 import type { IRouteRecordRaw } from '../types/index'
 
 const props = defineProps<{ item: IRouteRecordRaw }>()
@@ -38,6 +41,8 @@ const item = computed(() => {
 })
 
 function hasMultiChild(item: IRouteRecordRaw) {
-  return item.children ? item.children.length > 1 : false
+  return item.children
+    ? item.children.filter((item) => !item.meta?.hidden).length > 1
+    : false
 }
 </script>

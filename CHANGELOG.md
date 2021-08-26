@@ -1,5 +1,65 @@
 # Changelog
 
+### 0.11.2
+
+fix
+
+- styles: unconverted css-variables
+
+## 0.11.1
+
+feat
+
+- TreeSelect: add prop only-select-leaf
+- Layout: change the button of menu
+
+fix
+
+- Menu: routes lose reactive
+
+other
+
+- perf: use shallowRef replace ref
+
+## 0.11.0
+
+feat
+
+- TreeSelect: add ProTreeSelect
+
+fix
+
+- styles: missing css style
+- Form: styles error
+
+## 0.10.1
+
+feat
+
+- Form: support load local component
+
+fix
+
+- Menu: display error when use hidden
+- Crud: expand slot does not carry content
+- Form: grid layout style error on element-plus 1.0.2-beta.53
+
+## 0.10.0
+
+breaking changes
+
+- remove slots `left-header` `right-header` `bottom-header` in Layout
+- remove `style.css`, need to use `styles/index.css` instead
+
+```diff
+- import 'element-pro-components/lib/style.css'
++ import 'element-pro-components/lib/styles/index.css'
+```
+
+feat
+
+- refactor styles: support imports styles on demand
+
 ## 0.9.4
 
 feat

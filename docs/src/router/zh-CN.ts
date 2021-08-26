@@ -3,7 +3,7 @@ import type { IRouteRecordRaw } from '/@src/index'
 
 const zhCN: IRouteRecordRaw[] = [
   {
-    path: '/',
+    path: '/zh-CN/',
     redirect: '/zh-CN/guide/',
     component: BaseLayout,
     meta: { title: '指南', icon: 'el-icon-house' },
@@ -24,7 +24,7 @@ const zhCN: IRouteRecordRaw[] = [
         meta: { title: '自定义主题' },
       },
       {
-        path: '/zh-CN/router/',
+        path: '/zh-CN/guide/router',
         component: () => import('../../docs/zh-CN/guide/router.md'),
         meta: { title: '路由和菜单' },
       },
@@ -62,6 +62,11 @@ const zhCN: IRouteRecordRaw[] = [
         meta: { title: 'Tabs' },
       },
       {
+        path: '/zh-CN/components/link',
+        component: () => import('../../docs/zh-CN/components/Link.md'),
+        meta: { title: 'Link' },
+      },
+      {
         path: '/zh-CN/components/form',
         component: () => import('../../docs/zh-CN/components/Form.md'),
         meta: { title: 'Form' },
@@ -82,6 +87,11 @@ const zhCN: IRouteRecordRaw[] = [
         meta: { title: 'Select' },
       },
       {
+        path: '/zh-CN/components/tree-select',
+        component: () => import('../../docs/zh-CN/components/TreeSelect.md'),
+        meta: { title: 'TreeSelect' },
+      },
+      {
         path: '/zh-CN/components/input-tag',
         component: () => import('../../docs/zh-CN/components/InputTag.md'),
         meta: { title: 'InputTag' },
@@ -97,7 +107,7 @@ const zhCN: IRouteRecordRaw[] = [
         meta: { title: 'Crud' },
       },
       {
-        path: '/zh-CN/components/ColumnSetting',
+        path: '/zh-CN/components/column-setting',
         component: () => import('../../docs/zh-CN/components/ColumnSetting.md'),
         meta: { title: 'ColumnSetting' },
       },

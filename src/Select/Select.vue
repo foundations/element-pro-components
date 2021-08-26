@@ -22,7 +22,6 @@
       </el-option-group>
       <el-option
         v-else
-        :key="item.value"
         :value="item.value"
         :label="item.label"
         :disabled="item.disabled"
@@ -31,8 +30,11 @@
   </el-select>
 </template>
 
-<script setup name="ProSelect" lang="ts">
-import { defineEmit, defineProps } from 'vue'
+<script lang="ts">
+export default { name: 'ProSelect' }
+</script>
+
+<script setup lang="ts">
 import { ElSelect, ElOptionGroup, ElOption } from 'element-plus'
 import { useVModel, useSelectData } from '../composables/index'
 import type { MaybeArray, UnknownObject, StringObject } from '../types/index'
@@ -52,7 +54,7 @@ const props = defineProps<{
     children?: string
   }
 }>()
-const emit = defineEmit(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
 const modelValue = useVModel<
   MaybeArray<string | number | boolean | StringObject>
 >(props)

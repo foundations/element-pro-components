@@ -1,29 +1,43 @@
+---
+title: Menu
+meta:
+  - name: description
+    content: Menu that provides navigation for your website
+---
+
 # Menu
 
 > Menu that provides navigation for your website
 
-# Use
+## Use
 
-## Basic Use
+### Basic Use
 
-::: demo 组件默认将从 `vue-router` 中获取路由生成路由，格式参考页面下方
+::: demo By default, the component will generate routes from vue-router
 
 <template>
-  <pro-menu />
+  <pro-menu class="docs-menu" />
 </template>
+
+<style>
+.docs-menu {
+  max-height: 400px;
+  overflow: scroll;
+}
+</style>
 
 :::
 
-### 模式
+### Custom Mode
 
-::: demo 通过传入 `mode` 实现自定义菜单模式
+::: demo Set `mode` attribute to enable custom Mode
 
 <template>
   <pro-radio-button
     v-model="mode"
     :data="data"
   />
-  <pro-menu :mode="mode" />
+  <pro-menu :mode="mode" class="docs-menu" />
 </template>
 
 <script>
@@ -33,8 +47,8 @@ export default {
   setup() {
     const mode = ref('horizontal')
     const data = [
-      { value: 'vertical', label: '垂直' },
-      { value: 'horizontal', label: '水平' },
+      { value: 'vertical', label: 'Vertical' },
+      { value: 'horizontal', label: 'Horizontal' },
     ]
 
     return {
@@ -46,12 +60,12 @@ export default {
 
 :::
 
-### 自定义路由
+### Custom routes
 
-::: demo 通过传入 `routes` 实现自定义路由显示
+::: demo Set `routes` attribute to enable custom routes
 
 <template>
-  <pro-menu :routes="routes" />
+  <pro-menu :routes="routes" class="docs-menu" />
 </template>
 
 <script>
@@ -63,7 +77,9 @@ export default {
     const router = useRouter()
     const routes = computed(() => {
       const _routes = router.options.routes
-      return _routes.find(item => item.path === '/zh-CN/components/').children
+      return _routes.find(item => {
+        return item.path === '/en-US/components/'
+      })?.children || []
     })
 
     return {
@@ -71,6 +87,36 @@ export default {
     }
   }
 }
+</script>
+
+:::
+
+### Slots
+
+::: tip Tip
+Starting from `0.12.0`, the internal menu will be implemented using svgicon by default. If you want to continue to use fonticon, you can use the slot in the following way to achieve
+:::
+
+::: demo How to display the menu content through the default slot
+
+<template>
+  <pro-menu class="docs-menu">
+    <template #default="item">
+      <pro-link :to="item.path">
+        <i
+          v-if="item.meta?.icon"
+          :class="item.meta.icon"
+        />
+        <span v-if="item.meta?.title">
+          {{ item.meta.title }}
+        </span>
+      </pro-link>
+    </template>
+  </pro-menu>
+</template>
+
+<script>
+export default {}
 </script>
 
 :::

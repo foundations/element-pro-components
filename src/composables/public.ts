@@ -10,6 +10,7 @@ import {
   shallowRef,
   computed,
   WritableComputedRef,
+  ComputedRef,
 } from 'vue'
 import { useRouter, RouteRecordRaw } from 'vue-router'
 import { config } from '../utils/config'
@@ -25,6 +26,7 @@ import type {
   IScreenSize,
   UnknownObject,
   InstallOptions,
+  MaybeRef,
 } from '../types/index'
 
 /** get the global config */
@@ -42,7 +44,7 @@ export function useProOptions(): Required<InstallOptions> {
  * @param state init value (default `false`)
  */
 export function useShow(
-  state: boolean | Ref<boolean> = false
+  state: MaybeRef<boolean> = false
 ): {
   show: Ref<boolean>
   toggleShow: () => void
@@ -93,9 +95,9 @@ export function useCurrentRoutes(
   props: Readonly<{
     routes?: IRouteRecordRaw[]
   }>
-): Ref<IRouteRecordRaw[]> {
+): Ref<IRouteRecordRaw[]> | ComputedRef<IRouteRecordRaw[]> {
   if (props.routes && props.routes.length) {
-    return ref<IRouteRecordRaw[]>(props.routes) as Ref<IRouteRecordRaw[]>
+    return computed(() => props.routes as IRouteRecordRaw[])
   } else {
     const router = useRouter()
     router.options.routes = reactive<RouteRecordRaw[]>(

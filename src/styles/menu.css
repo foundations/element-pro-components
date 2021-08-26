@@ -1,0 +1,38 @@
+@import 'element-plus/lib/theme-chalk/el-menu.css';
+@import 'element-plus/lib/theme-chalk/el-menu-item.css';
+@import 'element-plus/lib/theme-chalk/el-submenu.css';
+
+.pro-menu {
+  &.el-menu {
+    border-right: 0;
+  }
+  & .pro-menu-icon {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+  }
+  &.el-menu--collapse > .el-submenu > .el-submenu__title > .pro-link {
+    height: auto;
+    width: auto;
+    overflow: hidden;
+    visibility: visible;
+    & .pro-menu-icon {
+      margin-right: 0;
+    }
+  }
+}
+.el-submenu__title,
+.el-menu-item {
+  & .pro-link {
+    display: block;
+    color: var(--pro-text-color-primary);
+    transition: var(--pro-color-transition-base);
+    &:hover {
+      color: var(--pro-color-primary);
+      text-decoration: none;
+    }
+  }
+}
+.el-menu-item.is-active .pro-link {
+  color: var(--pro-color-primary);
+}

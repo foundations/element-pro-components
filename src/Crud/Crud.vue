@@ -5,7 +5,7 @@
       :model-value="search"
       :columns="searchColumns"
       :menu="searchMenu"
-      :size="attrs.size"
+      :size="size"
       :rules="searchRules"
       :inline="true"
       class="pro-crud-search"
@@ -56,19 +56,19 @@
     <div class="pro-crud-menu">
       <div class="pro-menu-item">
         <slot
-          :size="attrs.size"
+          :size="size"
           name="menu-left"
         />
         <el-button
           v-if="menuColumns && menuColumns.add"
           v-bind="menuColumns.addProps"
-          :size="attrs.size"
+          :size="size"
           @click="openForm('add')"
         >
           {{ menuColumns.addText }}
         </el-button>
         <slot
-          :size="attrs.size"
+          :size="size"
           name="menu-right"
         />
       </div>
@@ -81,6 +81,7 @@
       ref="table"
       :columns="tableColumns"
       :menu="menuColumns"
+      :size="size"
       class="pro-crud-table"
     >
       <template
@@ -113,9 +114,15 @@
       <template #append>
         <slot name="append" />
       </template>
+      <template #expand="scope">
+        <slot
+          v-bind="scope"
+          name="expand"
+        />
+      </template>
       <template #menu="scope">
         <el-button
-          v-if="menuColumns && menuColumns.showEdit(scope.row)"
+          v-if="menuColumns && checkEdit(scope.row)"
           v-bind="menuColumns.editProps"
           :size="scope.size"
           @click="openForm('edit', scope.row)"
@@ -123,7 +130,7 @@
           {{ menuColumns.editText }}
         </el-button>
         <el-button
-          v-if="menuColumns && menuColumns.showDel(scope.row)"
+          v-if="menuColumns && checkDel(scope.row)"
           v-bind="menuColumns.delProps"
           :size="scope.size"
           @click="delRow(scope.row)"
@@ -148,6 +155,7 @@
         :model-value="modelValue"
         :columns="formColumns"
         :menu="menuColumns"
+        :size="size"
         class="pro-crud-form"
         @update:modelValue="upFormData"
         @submit="submitForm"
@@ -197,8 +205,12 @@
   </section>
 </template>
 
-<script setup name="ProCrud" lang="ts">
-import { useContext, defineEmit, defineProps, toRefs } from 'vue'
+<script lang="ts">
+export default { name: 'ProCrud' }
+</script>
+
+<script setup lang="ts">
+import { toRefs } from 'vue'
 import { ElDialog, ElButton } from 'element-plus'
 import {
   useCrudColumns,
@@ -210,11 +222,13 @@ import {
   useFormMethods,
   useFormSlotList,
 } from '../composables/index'
+import { isFunction } from '../utils/index'
 import ProForm from '../Form/index'
 import ProTable from '../Table/index'
 import type {
   CrudColumn,
   FormColumn,
+  StringObject,
   TableColumn,
   UnknownObject,
 } from '../types/index'
@@ -230,13 +244,14 @@ const props = defineProps<{
   modelValue?: Record<string, unknown>
   search?: Record<string, unknown>
   searchRules?: Record<string, unknown>
+  size?: 'medium' | 'small' | 'mini'
   beforeOpen?: (
     done: () => void,
     type: 'add' | 'edit',
     row?: UnknownObject
   ) => void
 }>()
-const emit = defineEmit([
+const emit = defineEmits([
   'update:modelValue',
   'update:search',
   'submit',
@@ -245,7 +260,6 @@ const emit = defineEmit([
   'search',
   'searchReset',
 ])
-const { expose } = useContext()
 const { searchRules } = toRefs(props)
 const { searchColumns, tableColumns, menuColumns } = useCrudColumns(props)
 const {
@@ -289,11 +303,23 @@ const searchSlotList = searchColumns.value
   : []
 const formSlotList = formColumns.value ? useFormSlotList(formColumns.value) : []
 
+function checkEdit(row: StringObject) {
+  return isFunction(menuColumns.value?.edit)
+    ? menuColumns.value?.edit(row)
+    : menuColumns.value?.edit
+}
+
+function checkDel(row: StringObject) {
+  return isFunction(menuColumns.value?.del)
+    ? menuColumns.value?.del(row)
+    : menuColumns.value?.del
+}
+
 function delRow(row: UnknownObject) {
   emit('delete', row)
 }
 
-expose({
+defineExpose({
   clearSelection,
   toggleRowSelection,
   toggleAllSelection,
@@ -309,14 +335,3 @@ expose({
   validateField,
 })
 </script>
-
-<style lang="postcss">
-.pro-crud-menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  & + .pro-table {
-    margin-top: 15px;
-  }
-}
-</style>

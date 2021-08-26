@@ -1,3 +1,10 @@
+---
+title: Tabs
+meta:
+  - name: description
+    content: 根据浏览记录自动记录历史 tab
+---
+
 # Tabs
 
 > 根据浏览记录自动记录历史 tab
@@ -26,12 +33,12 @@
 </template>
 
 <script>
-import { inject, onMounted, ref } from 'vue'
+import { inject, onMounted, shallowRef } from 'vue'
 
 export default {
   setup() {
     const tabs = inject('tabs') // 获取顶层 `Tabs` 注入
-    const childTabs = ref({})
+    const childTabs = shallowRef({})
 
     onMounted(() => {
       asyncList()
