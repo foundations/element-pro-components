@@ -13,98 +13,53 @@ meta:
 
 ### Basic Use
 
-::: demo By default, the component will generate routes from vue-router
+By default, the component will generate routes from vue-router, Go to <pro-link to="/zh-CN/guide/router">Router and Menu</pro-link> to view routing related usage
 
-<template>
-  <pro-layout class="docs-layout" />
-</template>
-
-<style>
-.docs-layout {
-  border: 1px solid var(--c-border);
-  height: 400px;
-}
-</style>
-
+::: demo
+@/demo/Layout/base.vue
 :::
 
-### Slots
+### Top mode
 
-::: demo More complex interface through slots
+Implement top bar mode by `mode="horizontal"`
 
-<template>
-  <pro-layout class="docs-layout">
-    <template #logo="{ collapse }">
-      <span style="line-height: 54px">
-        {{ collapse ? 'L' : 'logo' }}
-      </span>
-    </template>
-    <template #footer>
-      <p>footer</p>
-    </template>
-    <template #header-left>
-      <span>header-left</span>
-    </template>
-    <template #header-right>
-      <span>header-right</span>
-    </template>
-    <template #header-bottom>
-      <span>header-bottom</span>
-    </template>
-    <template #main-top>
-      <p>main-top</p>
-    </template>
-    <template #main-bottom>
-      <p>main-bottom</p>
-    </template>
-  </pro-layout>
-</template>
-
+::: demo
+@/demo/Layout/mode.vue
 :::
 
 ### Custom routes
 
-::: demo Set `routes` attribute to enable custom routes
+Set `routes` attribute to enable custom routes
 
-<template>
-  <pro-layout
-    :routes="routes"
-    class="docs-layout"
-  />
-</template>
+::: demo
+@/demo/Layout/routes.vue
+:::
 
-<script>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+### Slots
 
-export default {
-  setup() {
-    const router = useRouter()
-    const routes = computed(() => {
-      const _routes = router.options.routes
-      return _routes.find(item => {
-        return item.path === '/en-US/components/'
-      })?.children || []
-    })
+More complex interface through slots
 
-    return {
-      routes,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Layout/slots.vue
 :::
 
 ### Props
 
-| Name            | Description                                            | Type    | Default           |
-| :-------------- | :----------------------------------------------------- | :------ | :---------------- |
-| routes          | current routes                                         | array   | from `vue-router` |
-| transition      | the animation name of transition pages                 | string  | -                 |
-| collapse        | whether the menu is collapsed                          | boolean | false             |
-| default-openeds | array that contains keys of currently active sub-menus | Array   | -                 |
-| unique-opened   | whether only one sub-menu can be active                | boolean | false             |
+| Name                | Description                                                         | Type    | Options               | Default           |
+| :------------------ | :------------------------------------------------------------------ | :------ | :-------------------- | :---------------- |
+| fixed-header        | whether to fix the page header                                      | boolean | -                     | true              |
+| fixed-main          | whether to fix the page main                                        | boolean | -                     | false             |
+| transition          | the animation name of transition pages                              | string  | -                     | -                 |
+| routes              | current routes of menu                                              | array   | -                     | from `vue-router` |
+| mode                | menu display mode                                                   | string  | horizontal / vertical | vertical          |
+| collapse            | whether the menu is collapsed (available only in vertical mode)     | boolean | -                     | false             |
+| background-color    | background color of Menu (hex format)                               | string  | -                     | #ffffff           |
+| text-color          | text color of Menu (hex format)                                     | string  | -                     | #303133           |
+| active-text-color   | text color of currently active menu item (hex format)               | string  | -                     | #409EFF           |
+| default-openeds     | array that contains indexes of currently active sub-menus           | Array   | -                     | -                 |
+| unique-opened       | whether only one sub-menu can be active                             | boolean | -                     | false             |
+| menu-trigger        | how sub-menus are triggered, only works when `mode` is 'horizontal' | string  | hover / click         | hover             |
+| collapse-transition | whether to enable the collapse transition                           | boolean | -                     | true              |
 
 ### Slots
 

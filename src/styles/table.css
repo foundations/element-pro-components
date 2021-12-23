@@ -1,9 +1,5 @@
-@import 'element-plus/lib/theme-chalk/el-table.css';
-@import 'element-plus/lib/theme-chalk/el-table-column.css';
-@import 'element-plus/lib/theme-chalk/el-pagination.css';
-
-.pro-table + .pro-pagination {
+.pro-table .el-pagination {
   padding: 15px 0;
-  overflow: scroll hidden;
+  overflow: auto hidden;
   text-align: right;
 }

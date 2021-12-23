@@ -14,9 +14,9 @@ By default, layout-related components will automatically obtain the required rou
 Compared with the vue-router type, only the `meta` attribute is extended
 
 ```ts
-interface IRouteMeta extends RouteMeta {
+interface RouteMeta {
   title?: string // Show menu title
-  icon?: string // Show menu icon
+  icon?: string | Component // Show menu icon
   hidden?: boolean // Whether to display in the menu, does not affect the router jump
   keepAlive?: boolean // Whether to keepAlive
 }
@@ -28,27 +28,29 @@ refer router
 
 ### Use icon
 
-The Icon render as a components, so you can define as any icon component. example: `@element-plus/icons`
+The Icon render as a components, so you can define as any icon component.
 
-#### Use @element-plus/icons
+Install the required icon component library
 
-- Install
+- [@element-plus/icons-vue](https://www.npmjs.com/package/@element-plus/icons-vue)
+- [bootstrap-icons-vue](https://www.npmjs.com/package/bootstrap-icons-vue)
+- and more
+
+Let's use @element-plus/icons-vue as an example
 
 ```
-yarn add @element-plus/icons
+yarn add @element-plus/icons-vue
 # or
-npm install @element-plus/icons
+npm install @element-plus/icons-vue
 ```
 
-- **Globally register** requires icon components
+- Globally register
 
 ```js
-import { Edit, House, TakeawayBox } from '@element-plus/icons'
+import { Edit } from '@element-plus/icons-vue'
 
 app.component(Edit.name, Edit)
 ```
-
-- Custom icon
 
 ```js
 {
@@ -56,6 +58,20 @@ app.component(Edit.name, Edit)
   path: '/admin',
   component: Layout,
   meta: { title: 'Admin', icon: 'edit' },
+}
+```
+
+- Use components
+
+```js
+import { markRaw } from 'vue'
+import { Edit } from '@element-plus/icons-vue'
+// ...
+{
+  name: 'admin',
+  path: '/admin',
+  component: Layout,
+  meta: { title: 'Admin', icon: markRaw(Edit) },
 }
 ```
 

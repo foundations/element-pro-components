@@ -1,45 +1,22 @@
 import type { Component } from 'vue'
-import type { RuleItem } from 'async-validator'
+import type { FormItemRule } from 'element-plus/lib/components/form/src/form.type'
 import type {
   UnknownObject,
   IComponentSize,
   IButtonProps,
-  StringObject,
   DeepKeyof,
-  IRowProps,
   IColProps,
   MaybeArray,
+  ExternalParam,
+  IsAny,
 } from './index'
-
-interface IRuleItem extends RuleItem {
-  trigger: MaybeArray<'blur' | 'change'>
-}
 
 interface InvalidFields {
   [prop: string]: { message: string; field: string }[]
 }
 
-/** Form Props */
-export interface IFormProps<T = StringObject> extends IRowProps {
-  modelValue: T
-  columns: IFormColumns<T>
-  menu?: IFormMenuColumns
-  rules?: MaybeArray<IRuleItem>
-  inline?: boolean
-  labelPosition?: 'right' | 'left' | 'top'
-  labelWidth?: string
-  labelSuffix?: string
-  hideRequiredAsterisk?: boolean
-  showMessage?: boolean
-  inlineMessage?: boolean
-  statusIcon?: boolean
-  validateOnRuleChange?: boolean
-  size?: IComponentSize
-  disabled?: boolean
-}
-
-export interface FormColumn<T = StringObject> extends IColProps, StringObject {
-  /** whether column has a slot */
+export interface FormColumn<T = ExternalParam> extends IColProps {
+  /** @deprecated */
   slot?: boolean
   /** component name */
   component?: string | Component
@@ -50,7 +27,7 @@ export interface FormColumn<T = StringObject> extends IColProps, StringObject {
   /** max number of sub-form */
   max?: number
   /** keys of model that passed to form */
-  prop: DeepKeyof<T>
+  prop: IsAny<T> extends true ? string : DeepKeyof<T>
   /** label name */
   label?: string
   /** width of label, e.g. '50px'. Width auto is supported */
@@ -58,7 +35,7 @@ export interface FormColumn<T = StringObject> extends IColProps, StringObject {
   /** whether the field is required or not, will be determined by validation rules if omitted */
   required?: boolean
   /** validation rules of form */
-  rules?: MaybeArray<IRuleItem>
+  rules?: MaybeArray<FormItemRule>
   /** field error message, set its value and the field will validate error and show this message immediately */
   error?: string
   /** whether to show the error message */
@@ -70,7 +47,7 @@ export interface FormColumn<T = StringObject> extends IColProps, StringObject {
 }
 
 /** Form Columns Option */
-export type IFormColumns<T = StringObject> = FormColumn<T>[]
+export type IFormColumns<T = ExternalParam> = FormColumn<T>[]
 
 /** Form Menu Option */
 export interface FormMenu {
@@ -89,7 +66,7 @@ export interface FormMenu {
 }
 
 /** Form Menu Option */
-export type IFormMenuColumns = StringObject & FormMenu
+export type IFormMenuColumns = FormMenu
 
 export type IFormSubmit = (
   done: () => void,
@@ -106,16 +83,44 @@ export interface IFormValidateFieldCallback {
 }
 
 /** Form Expose Methods */
-export interface IFormExpose<T = StringObject> {
+export interface IFormExpose {
   /** validate the whole form. Takes a callback as a param. After validation, the callback will be executed with two params: a boolean indicating if the validation has passed, and an object containing all fields that fail the validation. Returns a promise if callback is omitted */
   validate: (callback?: IFormValidateCallback) => Promise<boolean>
   /** reset all the fields and remove validation result */
   resetFields: () => void
   /** clear validation message for certain fields. The parameter is prop name or an array of prop names of the form items whose validation messages will be removed. When omitted, all fields' validation messages will be cleared */
-  clearValidate: (props?: MaybeArray<DeepKeyof<T>>) => void
+  clearValidate: (props?: MaybeArray<string>) => void
   /** validate one or several form items */
   validateField: (
-    props: MaybeArray<DeepKeyof<T>>,
+    props: MaybeArray<string>,
     cb: IFormValidateFieldCallback
   ) => void
+}
+
+/**
+ * Type helper to make it easier to define columns
+ * @param columns the columns of Form
+ */
+export function defineFormColumns<T = ExternalParam>(
+  columns: IFormColumns<T>
+): IFormColumns<T> {
+  return columns
+}
+
+/**
+ * Type helper to make it easier to define menu columns
+ * @param columns the columns of Form menu
+ */
+export function defineFormMenuColumns(
+  columns: IFormMenuColumns
+): IFormMenuColumns {
+  return columns
+}
+
+/**
+ * Type helper to make it easier to define submit function
+ * @param fun submit function
+ */
+export function defineFormSubmit(fun: IFormSubmit): IFormSubmit {
+  return fun
 }

@@ -1,40 +1,19 @@
-import type {
+import {
+  IButtonProps,
+  UnknownObject,
+  ExternalParam,
   FormColumn,
-  IFormProps,
-  IFormColumns,
   IFormMenuColumns,
   IFormExpose,
   IFormSubmit,
   TableColumn,
-  ITableProps,
-  ITableColumns,
   ITableMenuColumns,
   ITableExpose,
-  IButtonProps,
-  IDialogProps,
-  UnknownObject,
-  StringObject,
 } from './index'
 
-export interface ICrudProps<T = StringObject>
-  extends Partial<ITableProps<T>>,
-    Partial<Omit<IFormProps<T>, 'menu' | 'align'>>,
-    IDialogProps {
-  columns?: ICrudColumns<T>
-  addColumns?: IFormColumns<T>
-  editColumns?: IFormColumns<T>
-  formColumns?: IFormColumns<T>
-  searchColumns?: IFormColumns<T>
-  tableColumns?: ITableColumns<T>
-  menu?: boolean | ICrudMenuColumns<T>
-  search?: T
-  searchRules?: StringObject
-  beforeOpen?: ICrudBeforeOpen<T>
-}
-
-export interface CrudColumn<T = StringObject, Q = T>
+export interface CrudColumn<T = ExternalParam>
   extends FormColumn<T>,
-    TableColumn<T, Q> {
+    TableColumn<T> {
   /** sub-form and multi-level header */
   children?: ICrudColumns<T>
   /** whether to display in the add form */
@@ -47,10 +26,10 @@ export interface CrudColumn<T = StringObject, Q = T>
   search?: boolean
 }
 
-/** Crud Columns Options (T: type about `prop`, Q: type about `row`) */
-export type ICrudColumns<T = StringObject, Q = T> = CrudColumn<T, Q>[]
+/** Crud Columns Options */
+export type ICrudColumns<T = ExternalParam> = CrudColumn<T>[]
 
-export interface CrudMenu<T = StringObject> {
+export interface CrudMenu<T = ExternalParam> {
   /** show add button */
   add?: boolean
   /** text of add button */
@@ -83,17 +62,19 @@ export interface CrudMenu<T = StringObject> {
   searchResetProps?: IButtonProps
 }
 
-export type ICrudMenuColumns<T = StringObject> = CrudMenu<T> &
+export type ICrudMenuColumns<T = ExternalParam> = CrudMenu<T> &
   ITableMenuColumns &
   IFormMenuColumns
 
 export type ICrudFormType = 'add' | 'edit'
 
-export type ICrudBeforeOpen<T = StringObject> = (
+export type ICrudBeforeOpen<T = ExternalParam> = (
   done: () => void,
   formType: ICrudFormType,
   row?: T
 ) => void
+
+export type ICrudBeforeClose = (done: () => void) => void
 
 export type ICrudSearch = IFormSubmit
 
@@ -105,4 +86,58 @@ export type ICrudSubmit = (
   invalidFields?: UnknownObject
 ) => void
 
-export type ICrudExpose<T = UnknownObject> = IFormExpose<T> & ITableExpose<T>
+export type ICrudExpose<T = UnknownObject> = IFormExpose & ITableExpose<T>
+
+/**
+ * Type helper to make it easier to define columns
+ * @param columns the columns of Crud
+ */
+export function defineCrudColumns<T = ExternalParam>(
+  columns: ICrudColumns<T>
+): ICrudColumns<T> {
+  return columns
+}
+
+/**
+ * Type helper to make it easier to define menu columns
+ * @param columns the columns of Menu
+ */
+export function defineCrudMenuColumns<T = ExternalParam>(
+  columns: ICrudMenuColumns<T>
+): ICrudMenuColumns<T> {
+  return columns
+}
+
+/**
+ * Type helper to make it easier to define function (before the dialog is opened)
+ * @param fun function
+ */
+export function defineCrudBeforeOpen<T = ExternalParam>(
+  fun: ICrudBeforeOpen<T>
+): ICrudBeforeOpen<T> {
+  return fun
+}
+
+/**
+ * Type helper to make it easier to define function (before the dialog is closed)
+ * @param fun function
+ */
+export function defineCrudBeforeClose(fun: ICrudBeforeClose): ICrudBeforeClose {
+  return fun
+}
+
+/**
+ * Type helper to make it easier to define search function
+ * @param fun search function
+ */
+export function defineCrudSearch(fun: ICrudSearch): ICrudSearch {
+  return fun
+}
+
+/**
+ * Type helper to make it easier to define submit function
+ * @param fun submit function
+ */
+export function defineCrudSubmit(fun: ICrudSubmit): ICrudSubmit {
+  return fun
+}

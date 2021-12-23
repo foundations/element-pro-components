@@ -1,12 +1,14 @@
+import { markRaw } from 'vue'
+import { House, TakeawayBox } from '@element-plus/icons-vue'
 import BaseLayout from '../layout/Layout.vue'
-import type { IRouteRecordRaw } from '/@src/index'
+import type { RouteRecordRaw } from 'vue-router'
 
-const zhCN: IRouteRecordRaw[] = [
+const zhCN: RouteRecordRaw[] = [
   {
     path: '/zh-CN/',
     redirect: '/zh-CN/guide/',
     component: BaseLayout,
-    meta: { title: '指南', icon: 'el-icon-house' },
+    meta: { title: '指南', icon: markRaw(House) },
     children: [
       {
         path: '/zh-CN/guide/introduction',
@@ -19,6 +21,11 @@ const zhCN: IRouteRecordRaw[] = [
         meta: { title: '快速上手' },
       },
       {
+        path: '/zh-CN/guide/i18n',
+        component: () => import('../../docs/zh-CN/guide/i18n.md'),
+        meta: { title: '国际化' },
+      },
+      {
         path: '/zh-CN/guide/theme',
         component: () => import('../../docs/zh-CN/guide/theme.md'),
         meta: { title: '自定义主题' },
@@ -28,18 +35,13 @@ const zhCN: IRouteRecordRaw[] = [
         component: () => import('../../docs/zh-CN/guide/router.md'),
         meta: { title: '路由和菜单' },
       },
-      {
-        path: '/zh-CN/guide/design',
-        component: () => import('../../docs/zh-CN/guide/design.md'),
-        meta: { title: '组件设计' },
-      },
     ],
   },
   {
     path: '/zh-CN/components/',
     redirect: '/zh-CN/components/layout',
     component: BaseLayout,
-    meta: { title: '组件', icon: 'el-icon-takeaway-box' },
+    meta: { title: '组件', icon: markRaw(TakeawayBox) },
     children: [
       {
         path: '/zh-CN/components/layout',
@@ -110,6 +112,11 @@ const zhCN: IRouteRecordRaw[] = [
         path: '/zh-CN/components/column-setting',
         component: () => import('../../docs/zh-CN/components/ColumnSetting.md'),
         meta: { title: 'ColumnSetting' },
+      },
+      {
+        path: '/zh-CN/components/descriptions',
+        component: () => import('../../docs/zh-CN/components/Descriptions.md'),
+        meta: { title: 'Descriptions' },
       },
     ],
   },

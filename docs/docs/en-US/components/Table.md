@@ -13,554 +13,96 @@ meta:
 
 ### Basic Use
 
-::: demo Set `columns` attribute will automatic generate columns
+When columns is bound to a reactive array, changes in the array will affect table changes (dynamic table). If you don't need a dynamic table, it is recommended to bind an ordinary array.
 
-<template>
-  <pro-table
-    :data="data"
-    :columns="columns"
-  />
-</template>
+::: demo
+@/demo/Table/base.vue
+:::
 
-<script>
-import { ref } from 'vue'
+### Intellisense
 
-export default {
-  setup() {
-    const columns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
+Use the `defineTableColumns` `defineTableMenuColumns` `defineTableSelectionColumns` `defineTableIndexColumns` `defineTableExpandColumns` to make it easier to define columns
 
-    return {
-      data,
-      columns,
-    }
-  }
-}
-</script>
+::: demo
+@/demo/Table/define.vue
+:::
 
+### Nested value
+
+::: demo
+@/demo/Table/nested.vue
 :::
 
 ### Index Columns
 
-::: demo Set `index` attribute to display index columns
+Set `index` attribute to display index columns
 
-<template>
-  <pro-table
-    :data="data"
-    :columns="columns"
-    :index="{ label: '#' }"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const columns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    return {
-      data,
-      columns,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Table/index.vue
 :::
 
 ### Selection Columns
 
-::: demo Set `selection` attribute to display selection columns
+Set `selection` attribute to display selection columns
 
-<template>
-  <pro-table
-    :data="data"
-    :columns="columns"
-    selection
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const columns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    return {
-      data,
-      columns,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Table/selection.vue
 :::
 
 ### Expand Columns
 
-::: demo Set `expand` attribute to display expand columns, and use expand slot to define display content
+Use expand slot to define display content, and Set `expand` attribute to control expand columns
 
-<template>
-  <pro-table
-    :data="data"
-    :columns="columns"
-    expand
-  >
-    <template #expand="{ row }">
-      {{ row }}
-    </template>
-  </pro-table>
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const columns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    return {
-      data,
-      columns,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Table/expand.vue
 :::
 
 ### Menu Columns
 
-::: demo Set `menu` attribute to display menu Columns, and use menu slot to define display content
+Use menu slot to define display content, and Set `menu` attribute to control menu Columns
 
-<template>
-  <pro-table
-    :data="data"
-    :columns="columns"
-    :menu="menu"
-  >
-    <template #menu="{ size }">
-      <el-button
-        :size="size"
-        type="text"
-      >
-        Detail
-      </el-button>
-    </template>
-  </pro-table>
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const menu = ref({
-      label: 'Operations',
-      align: 'center',
-    })
-    const columns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    return {
-      menu,
-      data,
-      columns,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Table/menu.vue
 :::
 
 ### Slots
 
-::: demo Use simple [render-function](https://v3.cn.vuejs.org/guide/render-function.html) by `render` in `columns`. or set `slot: true` then write slot with `[prop]` in template
+Use simple [render-function](https://v3.cn.vuejs.org/guide/render-function.html) by `render` in `columns`. or directly add some slot with `[prop]` in the template.
 
-<template>
-  <pro-table
-    :data="data"
-    :columns="columns3"
-  >
-    <template #name-header="{ column }">
-      <s>{{ column.label }}</s>
-    </template>
-    <template #name="{ row, size }">
-      <el-tag :size="size">
-        {{ row?.name }}
-      </el-tag>
-    </template>
-  </pro-table>
-</template>
-
-<script>
-import { h, ref } from 'vue'
-
-export default {
-  setup() {
-    const columns3 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-        render: '--',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-        slot: true,
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-        render: (row) => h('em', null, row.address),
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    return {
-      data,
-      columns3,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Table/slots.vue
 :::
 
 ### Pagination
 
-::: demo Set `total` attribute to display pagination, use `v-model:current-page` to bind current page; use `v-model:page-size` to bind current page size
+Set `total` attribute to display pagination, use `v-model:current-page` to bind current page; use `v-model:page-size` to bind current page size
 
-<template>
-  <pro-table
-    v-model:current-page="currentPage"
-    v-model:page-size="pageSize"
-    :data="data"
-    :columns="columns"
-    :total="total"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const currentPage = ref(1)
-    const pageSize = ref(10)
-    const total = ref(50)
-    const columns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    return {
-      currentPage,
-      pageSize,
-      total,
-      data,
-      columns,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Table/pagination.vue
 :::
 
 ### Grouping table head
 
-::: demo Set `children` in `columns` will automatic generate the grouping table head
+Set `children` in `columns` will automatic generate the grouping table head
 
-<template>
-  <pro-table
-    :data="data"
-    :columns="columns2"
-  />
-</template>
+::: demo
+@/demo/Table/group.vue
+:::
 
-<script>
-import { ref } from 'vue'
+### Async Table
 
-export default {
-  setup() {
-    const columns2 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'User',
-        children: [
-          {
-            label: 'Name',
-            prop: 'name',
-          },
-          {
-            label: 'Address',
-            prop: 'address',
-          },
-        ],
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
+To implement Async Table, columns must be bound to a reactive array
 
-    return {
-      data,
-      columns2,
-    }
-  }
-}
-</script>
+::: demo
+@/demo/Table/async.vue
+:::
 
+### TypeScript
+
+The function `defineTableColumns` supports passing in a Generics type to infer the value of `prop`
+
+::: demo
+@/demo/Table/typescript.vue
 :::
 
 ### Props
@@ -619,7 +161,6 @@ export default {
 | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------- |
 | prop                | the key of data                                                                                                                                                                                                 | string                                  | -                                                                                                                                | -                                 |
 | label               | column label                                                                                                                                                                                                    | string                                  | -                                                                                                                                | -                                 |
-| slot                | whether to enable slot                                                                                                                                                                                          | boolean                                 | -                                                                                                                                | false                             |
 | render              | render function for table columns                                                                                                                                                                               | string / function(row)                  | -                                                                                                                                | -                                 |
 | hide                | Whether to hide in the table                                                                                                                                                                                    | boolean                                 | -                                                                                                                                | false                             |
 | children            | grouping table head                                                                                                                                                                                             | array                                   | -                                                                                                                                | -                                 |
@@ -687,10 +228,6 @@ export default {
 | clearFilter        | clear filters of the columns whose `columnKey` are passed in. If no params, clear all filters                                                                     | columnKeys                  |
 | doLayout           | refresh the layout of Table. When the visibility of Table changes, you may need to call this method to get a correct layout                                       | -                           |
 | sort               | sort Table manually. Property `prop` is used to set sort column, property `order` is used to set sort order                                                       | prop: string, order: string |
-
-::: tip Tip
-If you use `typescript`, you can export `ITableExpose` from the component to provide better type inference
-:::
 
 ### Slots
 

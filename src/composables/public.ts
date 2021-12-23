@@ -1,30 +1,20 @@
 import {
-  onMounted,
   Ref,
   ref,
-  onUnmounted,
   unref,
   getCurrentInstance,
   reactive,
   watchEffect,
-  shallowRef,
   computed,
-  WritableComputedRef,
   ComputedRef,
 } from 'vue'
 import { useRouter, RouteRecordRaw } from 'vue-router'
+import { useWindowSize } from '@vueuse/core'
 import { config } from '../utils/config'
-import {
-  getScreenSize,
-  addResizeListener,
-  removeResizeListener,
-  ResizableElement,
-  objectDeepMerge,
-} from '../utils/index'
+import { getScreenSize, objectDeepMerge } from '../utils/index'
 import type {
   IRouteRecordRaw,
   IScreenSize,
-  UnknownObject,
   InstallOptions,
   MaybeRef,
 } from '../types/index'
@@ -35,7 +25,7 @@ export function useProOptions(): Required<InstallOptions> {
   const proxy = (vm?.proxy || {}) as { $PROOPTIONS: InstallOptions }
 
   return '$PROOPTIONS' in proxy
-    ? objectDeepMerge<Required<InstallOptions>>(config, proxy.$PROOPTIONS)
+    ? objectDeepMerge(config, proxy.$PROOPTIONS)
     : config
 }
 
@@ -63,28 +53,12 @@ export function useShow(
 }
 
 /** Gets the responsive breakpoint of the current screen */
-export function useScreenSize(): Ref<IScreenSize> {
-  const size = ref<IScreenSize>('xl')
-  const el = ref<ResizableElement>({} as ResizableElement)
+export function useScreenSize(): ComputedRef<IScreenSize> {
+  const { width } = useWindowSize()
 
-  onMounted(() => {
-    el.value = (document.getElementsByTagName(
-      'body'
-    )[0] as unknown) as ResizableElement
-    addResizeListener(el.value, setSize)
-    setSize()
+  return computed(() => {
+    return getScreenSize(width.value)
   })
-
-  onUnmounted(() => {
-    removeResizeListener(el.value, setSize)
-  })
-
-  function setSize() {
-    if (!el.value) return
-    size.value = getScreenSize(el.value.clientWidth)
-  }
-
-  return size
 }
 
 /**
@@ -114,52 +88,20 @@ export function useCurrentRoutes(
 }
 
 /**
- * exclusion `class` `style` for attrs
- * @param excludeKeys Additional exclusion value
- */
-export function useAttrs(excludeKeys: string[] = []): Ref<UnknownObject> {
-  const instance = getCurrentInstance() || { attrs: {} }
-  const attrs = shallowRef({})
-  const exclude = excludeKeys.concat(['class', 'style'])
-
-  instance.attrs = reactive(instance.attrs)
-
-  watchEffect(() => {
-    const _attrs = { ...instance.attrs }
-
-    exclude.forEach((item: string) => {
-      if (item in _attrs) {
-        _attrs[item] = undefined
-      }
-    })
-
-    attrs.value = _attrs
-  })
-
-  return attrs
-}
-
-/**
- * bind model value
- * @param props value props
+ * emit value to parent
  * @param key value key
- * @param defaultValue config the default value
  * @param emit update function
  */
-export function useVModel<T>(
-  props: Readonly<UnknownObject>,
+export function useEmitValue(
   key = 'modelValue',
-  defaultValue?: T,
   emit?: (name: string, ...args: unknown[]) => void
-): WritableComputedRef<T | undefined> {
+): (value: unknown) => void {
   const instance = getCurrentInstance()
   const _emit = emit || instance?.emit
-  return computed<T | undefined>({
-    get() {
-      return (props[key] as T) || defaultValue
-    },
-    set(value) {
-      _emit && _emit(`update:${key}`, value)
-    },
-  })
+
+  function emitValue(value: unknown) {
+    _emit && _emit(`update:${key}`, value)
+  }
+
+  return emitValue
 }

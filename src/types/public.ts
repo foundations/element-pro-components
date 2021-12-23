@@ -1,4 +1,4 @@
-import type { App, ComputedRef, DefineComponent, Ref } from 'vue'
+import type { ExtractPropTypes, Ref, Plugin } from 'vue'
 import type { CrudMenu, FormMenu, IPagination } from './index'
 
 export type StringObject = Record<string, unknown>
@@ -7,31 +7,75 @@ export type UnknownObject = Record<string | number, unknown>
 
 export type UnknownFunction = (...arg: unknown[]) => unknown
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+type DeepNested<T> = T extends object[]
+  ? DeepKeyof<Exclude<T[number], undefined>>
+  : T extends unknown[]
+  ? never
+  : // eslint-disable-next-line @typescript-eslint/ban-types
+  T extends object
+  ? DeepKeyof<Exclude<T, undefined>>
+  : never
+
+type WithNumber<T, Q extends keyof T> = `${Q & string}${Exclude<
+  T[Q],
+  undefined
+> extends unknown[]
+  ? `[${number}]`
+  : ''}${`.${DeepNested<Exclude<T[Q], undefined>> & string}` | ''}`
+
+/**
+ * Get the deep key of the object
+ *
+ * for example:
+ *
+ * ```
+ *  DeepKeyof<{
+ *    name: string
+ *    address: string
+ *  }> // -> 'name' | 'address'
+ *
+ *  DeepKeyof<{
+ *    date: string
+ *    user: {
+ *      name: string
+ *      address: string
+ *    }[]
+ *  }> // -> "date" | "user" | "name" | "address" | `user[${number}]` | `user[${number}].name` | `user[${number}].address`
+ * ```
+ */
 export type DeepKeyof<T> = {
-  [Q in keyof T]: T[Q] extends UnknownObject[]
-    ? DeepKeyof<T[Q][number]> | Q
-    : T[Q] extends UnknownObject
-    ? DeepKeyof<T[Q]> | Q
-    : Q
+  [Q in keyof T]-?: Q | DeepNested<Exclude<T[Q], undefined>> | WithNumber<T, Q>
 }[keyof T]
 
 export type MaybeArray<T> = T | Array<T>
 
 export type MaybeRef<T> = T | Ref<T>
 
-export type MaybeComputedRef<T> = T | ComputedRef<T>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExternalParam = any
 
-export type IDefineComponent<Props = UnknownObject> = DefineComponent<Props> & {
-  install: (app: App, options?: InstallOptions) => void
-}
+export type IsAny<T> = 0 extends T & 1 ? true : false
 
-export type MenuOptions = CrudMenu & FormMenu & StringObject
+export type IDefinePlugin<T> = T & Plugin
 
-export interface InstallOptions extends StringObject {
+export type IDefineProps<T> = Readonly<ExtractPropTypes<T>>
+
+export type MenuOptions = CrudMenu & FormMenu
+
+export interface InstallOptions {
   /** Pagination Attributes */
   pagination?: IPagination
   /** Menu Attributes */
   menu?: MenuOptions
+}
+
+/**
+ * type helper to make it easier to define options
+ * @param options the components options
+ */
+export function defineOptions(options: InstallOptions): InstallOptions {
+  return options
 }
 
 // TODO: will use element-plus types (the current type is not perfect)
@@ -78,30 +122,9 @@ export interface IButtonProps {
   circle?: boolean
 }
 
-export interface IDialogProps {
-  title?: string
-  width?: string | number
-  fullscreen?: boolean
-  top?: string
-  modal?: boolean
-  appendToBody?: boolean
-  lockScroll?: boolean
-  customClass?: string
-  openDelay?: number
-  closeDelay?: number
-  closeOnClickModal?: boolean
-  closeOnPressEscape?: boolean
-  showClose?: boolean
-  beforeClose?: (done: () => void) => void
-  center?: boolean
-  destroyOnClose?: boolean
-}
-
 export interface IRowProps {
   /** grid spacing */
   gutter?: number
-  /** layout mode, you can use flex, works in modern browsers */
-  type?: string
   /** horizontal alignment of flex layout */
   justify?: 'start' | 'end' | 'center' | 'space-around' | 'space-between'
   /** vertical alignment of flex layout */

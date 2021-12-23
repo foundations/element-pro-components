@@ -13,140 +13,42 @@ meta:
 
 ### Basic Use
 
-::: demo When using `pro-input-tag`, most attribute of `type="text"` are supported
+When using `pro-input-tag`, most attribute of `type="text"` are supported
 
-<template>
-  <pro-input-tag
-    v-model="inputTags"
-    placeholder="Please click the space button after input"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const inputTags = ref([])
-
-    return {
-      inputTags
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/InputTag/base.vue
 :::
 
 ### Trigger by Enter
 
-::: demo Set `trigger="enter"` attribute to enable trigger by `Enter`
+Input is triggered by the space bar by default, Set `trigger="enter"` attribute to enable trigger by `Enter`
 
-<template>
-  <pro-input-tag
-    v-model="inputTags1"
-    trigger="enter"
-    placeholder="Please click the enter button after input"
-  />
-</template>
+::: demo
+@/demo/InputTag/trigger.vue
+:::
 
-<script>
-import { ref } from 'vue'
+### Limit max tags
 
-export default {
-  setup() {
-    const inputTags1 = ref([])
+The max number of tags that can be entered can be configured through `max`
 
-    return {
-      inputTags1
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/InputTag/max.vue
 :::
 
 ### Component Size
 
-::: demo Set `size` attribute to change the size of Input and Tag
+Set `size` attribute to change the size of Input and Tag
 
-<template>
-  <pro-input-tag
-    v-for="item in sizeList"
-    v-model="inputTags2"
-    :key="item"
-    :size="item"
-    placeholder="Please click the space button after input"
-    class="input-tag-size"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const inputTags2 = ref([])
-    const sizeList = ['medium', 'small', 'mini']
-
-    return {
-      inputTags2,
-      sizeList,
-    }
-  }
-}
-</script>
-
-<style>
-.input-tag-size {
-  margin-bottom: 10px;
-}
-.input-tag-size:last-child {
-  margin-bottom: 0;
-}
-</style>
-
+::: demo
+@/demo/InputTag/size.vue
 :::
 
 ### Autocomplete
 
-::: demo When using `pro-autocomplete-tag`, most attribute of `ElAutocomplete` are supported
+When using `pro-autocomplete-tag`, most attribute of `ElAutocomplete` are supported
 
-<template>
-  <pro-autocomplete-tag
-    v-model="autocompleteTags"
-    :fetch-suggestions="querySearch"
-    placeholder="Please click the space button after input"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const autocompleteTags = ref([])
-    const list = [
-      { value: 'Go', tag: 'go' },
-      { value: 'JavaScript', tag: 'javascript' },
-      { value: 'Python', tag: 'python' },
-    ]
-
-    function querySearch(queryString, cb) {
-      cb(queryString ? list.filter(i => {
-        return i.value.indexOf(queryString.toLowerCase()) === 0
-      }) : list)
-    }
-
-    return {
-      autocompleteTags,
-      list,
-      querySearch,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/AutocompleteTag/base.vue
 :::
 
 ### InputTag Props
@@ -155,6 +57,7 @@ export default {
 | :-------------- | :----------------------------------- | :------ | :-------------------------------- | :------ |
 | v-model         | binding value                        | array   | -                                 | -       |
 | trigger         | the key to trigger input tag         | string  | space / enter                     | space   |
+| max             | max number tags that can be enter    | number  | -                                 | -       |
 | size            | component size                       | string  | medium / small / mini             | -       |
 | type            | tag Type                             | string  | success / info / warning / danger | -       |
 | hit             | whether Tag has a highlighted border | boolean | -                                 | false   |
@@ -176,8 +79,9 @@ export default {
 | label           | label text                           | string  | -                                 | -       |
 | tabindex        | input tabindex                       | string  | -                                 | -       |
 | validate-event  | whether to trigger form validation   | boolean | -                                 | true    |
+| input-style     | the style of input                   | object  | -                                 | -       |
 
-### AutocompleteTag
+## AutocompleteTag
 
 > Enter an array of tags with some recommended tips
 
@@ -187,6 +91,7 @@ export default {
 | :-------------------- | :------------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------- | :----------- |
 | v-model               | binding value                                                                                                              | array                           | -                                                              | -            |
 | trigger               | the key to trigger input tag                                                                                               | string                          | space / enter                                                  | space        |
+| max                   | max number that can be enter                                                                                               | number                          | -                                                              | -            |
 | size                  | component size                                                                                                             | string                          | medium / small / mini                                          | -            |
 | type                  | tag Type                                                                                                                   | string                          | success / info / warning / danger                              | -            |
 | hit                   | whether Tag has a highlighted border                                                                                       | boolean                         | -                                                              | false        |

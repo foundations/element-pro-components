@@ -1,23 +1,57 @@
-import { ComputedRef, computed, ref, unref, Ref } from 'vue'
-import { useProOptions, useAttrs, useScreenSize } from './index'
+import { ComputedRef, computed, ref, unref, useSlots, Ref, Slot } from 'vue'
+import { useLocale } from 'element-plus'
+import { useProOptions } from './index'
 import {
   isFunction,
   isObject,
   filterDeep,
   objectDeepMerge,
-  objectPick,
 } from '../utils/index'
 import type {
-  ICrudProps,
+  UnknownObject,
+  MaybeRef,
+  ExternalParam,
   ICrudFormType,
   ICrudMenuColumns,
   IFormColumns,
   IFormMenuColumns,
   IFormSubmit,
   ITableColumns,
-  UnknownObject,
-  MaybeComputedRef,
 } from '../types/index'
+import type { ICrudProps } from '../Crud/index'
+
+function useCrudMenu(): ComputedRef<ICrudMenuColumns> {
+  const localeMenu = computed(() => {
+    const { t } = useLocale()
+    const menu: ICrudMenuColumns = {}
+    const menuList = [
+      'add',
+      'edit',
+      'del',
+      'submit',
+      'reset',
+      'search',
+      'searchReset',
+    ]
+
+    menuList.forEach((item) => {
+      const menuKey = `pro.crud.${item}`
+      const menuText = t(menuKey)
+
+      if (menuText && menuText !== menuKey) {
+        const key = `${item}Text` as keyof ICrudMenuColumns
+        menu[key] = menuText as ExternalParam
+      }
+    })
+
+    return menu
+  })
+
+  return computed(() => {
+    const options = useProOptions()
+    return objectDeepMerge<ICrudMenuColumns>(options.menu, localeMenu.value)
+  })
+}
 
 export function useCrudColumns(
   props: Readonly<ICrudProps>
@@ -38,10 +72,10 @@ export function useCrudColumns(
   })
   const menuColumns = computed(() => {
     if (!props.menu) return undefined
-    const options = useProOptions()
+    const defaultMenu = useCrudMenu()
     return isObject(props.menu)
-      ? objectDeepMerge<ICrudMenuColumns>(options.menu, props.menu)
-      : options.menu
+      ? objectDeepMerge<ICrudMenuColumns>(defaultMenu.value, props.menu)
+      : defaultMenu.value
   })
 
   return {
@@ -129,7 +163,7 @@ export function useCrudSearchForm(
     event: 'update:search' | 'search' | 'searchReset',
     ...args: unknown[]
   ) => void,
-  menuColumns?: MaybeComputedRef<ICrudMenuColumns | undefined>
+  menuColumns?: MaybeRef<ICrudMenuColumns | undefined>
 ): {
   searchMenu: ComputedRef<IFormMenuColumns>
   searchForm: IFormSubmit
@@ -138,8 +172,8 @@ export function useCrudSearchForm(
 } {
   const searchMenu = computed<IFormMenuColumns>(() => {
     const _menuColumns = unref(menuColumns)
-    const options = useProOptions()
-    const menu = _menuColumns ? _menuColumns : options.menu
+    const defaultMenu = useCrudMenu()
+    const menu = _menuColumns ? _menuColumns : defaultMenu.value
 
     return {
       submit: menu.search,
@@ -171,68 +205,50 @@ export function useCrudSearchForm(
   }
 }
 
-export function useCrudAttrs(
-  formType: ICrudFormType | Ref<ICrudFormType>,
-  resetForm: (reset?: boolean) => void,
-  menuColumns?: MaybeComputedRef<ICrudMenuColumns | undefined>
-): {
-  attrs: Ref<UnknownObject>
-  bindDialog: ComputedRef<UnknownObject>
+export function useCrudSlots(): {
+  searchSlots: Record<string, Slot | undefined>
+  tableSlots: Record<string, Slot | undefined>
+  formSlots: Record<string, Slot | undefined>
 } {
-  const attrs = useAttrs()
-  const size = useScreenSize()
-  const bindDialog = computed(() => {
-    const _menuColumns = unref(menuColumns)
-    const _formType = unref(formType)
-    const title = isObject(_menuColumns)
-      ? _formType === 'add'
-        ? _menuColumns.addText
-        : _menuColumns.editText
-      : _formType
-    const keys = [
-      'title',
-      'width',
-      'fullscreen',
-      'top',
-      'modal',
-      'append-to-body',
-      'lock-scroll',
-      'custom-class',
-      'open-delay',
-      'close-delay',
-      'close-on-click-modal',
-      'close-on-press-escape',
-      'show-close',
-      'before-close',
-      'center',
-      'destroy-on-close',
-    ]
-    const bindDialog = objectPick<UnknownObject, UnknownObject>(
-      attrs.value,
-      keys
-    )
-    const _beforeClose = bindDialog['before-close']
-    const sizeWidth = { xs: '90%', sm: '80%', md: '70%', lg: '60%', xl: '50%' }
+  const slots = useSlots()
+  const searchSlots: Record<string, Slot | undefined> = {}
+  const tableSlots: Record<string, Slot | undefined> = {}
+  const formSlots: Record<string, Slot | undefined> = {}
 
-    function beforeClose(done: () => void) {
-      function callback() {
-        resetForm(true)
-        done()
-      }
+  for (const key in slots) {
+    const item = slots[key]
 
-      isFunction(_beforeClose) ? _beforeClose(callback) : callback()
+    if (/^search-/.test(key)) {
+      const _key = key.replace(/^search-/, '')
+      searchSlots[_key] = item
+    } else if (/^search$/.test(key)) {
+      searchSlots.default = item
+    } else if (/^table-/.test(key)) {
+      const _key = key.replace(/^table-/, '')
+      tableSlots[_key] = item
+    } else if (/^table$/.test(key)) {
+      tableSlots.default = item
+    } else if (/\w+-header$/.test(key)) {
+      tableSlots[key] = item
+    } else if (/^append$/.test(key)) {
+      tableSlots[key] = item
+    } else if (/^expand$/.test(key)) {
+      tableSlots[key] = item
+    } else if (/^form-/.test(key)) {
+      const _key = key.replace(/^form-/, '')
+      formSlots[_key] = item
+    } else if (/\w+-error$/.test(key)) {
+      formSlots[key] = item
+    } else if (/\w+-label$/.test(key)) {
+      formSlots[key] = item
+    } else if (/^form$/.test(key)) {
+      formSlots.default = item
     }
-
-    bindDialog.title = bindDialog.title ?? title
-    bindDialog['custom-class'] = bindDialog['custom-class'] ?? 'pro-crud-dialog'
-    bindDialog['before-close'] = beforeClose
-    bindDialog.width = bindDialog.width ?? sizeWidth[size.value]
-
-    return bindDialog
-  })
+  }
 
   return {
-    attrs,
-    bindDialog,
+    searchSlots,
+    tableSlots,
+    formSlots,
   }
 }

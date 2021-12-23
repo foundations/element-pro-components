@@ -1,12 +1,14 @@
+import { markRaw } from 'vue'
+import { House, TakeawayBox } from '@element-plus/icons-vue'
 import BaseLayout from '../layout/Layout.vue'
-import type { IRouteRecordRaw } from '/@src/index'
+import type { RouteRecordRaw } from 'vue-router'
 
-const enUS: IRouteRecordRaw[] = [
+const enUS: RouteRecordRaw[] = [
   {
     path: '/en-US/',
     redirect: '/en-US/guide/',
     component: BaseLayout,
-    meta: { title: 'Guide', icon: 'el-icon-house' },
+    meta: { title: 'Guide', icon: markRaw(House) },
     children: [
       {
         path: '/en-US/guide/introduction',
@@ -19,6 +21,11 @@ const enUS: IRouteRecordRaw[] = [
         meta: { title: 'Quick Start' },
       },
       {
+        path: '/en-US/guide/i18n',
+        component: () => import('../../docs/en-US/guide/i18n.md'),
+        meta: { title: 'Internationalization' },
+      },
+      {
         path: '/en-US/guide/theme',
         component: () => import('../../docs/en-US/guide/theme.md'),
         meta: { title: 'Custom Theme' },
@@ -28,18 +35,13 @@ const enUS: IRouteRecordRaw[] = [
         component: () => import('../../docs/en-US/guide/router.md'),
         meta: { title: 'Router and Menu' },
       },
-      {
-        path: '/en-US/guide/design',
-        component: () => import('../../docs/en-US/guide/design.md'),
-        meta: { title: 'Components Design' },
-      },
     ],
   },
   {
     path: '/en-US/components/',
     redirect: '/en-US/components/layout',
     component: BaseLayout,
-    meta: { title: 'Components', icon: 'el-icon-takeaway-box' },
+    meta: { title: 'Components', icon: markRaw(TakeawayBox) },
     children: [
       {
         path: '/en-US/components/layout',
@@ -110,6 +112,11 @@ const enUS: IRouteRecordRaw[] = [
         path: '/en-US/components/column-setting',
         component: () => import('../../docs/en-US/components/ColumnSetting.md'),
         meta: { title: 'ColumnSetting' },
+      },
+      {
+        path: '/en-US/components/descriptions',
+        component: () => import('../../docs/en-US/components/Descriptions.md'),
+        meta: { title: 'Descriptions' },
       },
     ],
   },

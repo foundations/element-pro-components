@@ -13,22 +13,15 @@ meta:
 
 ### 基础用法
 
-::: demo 将根据当前路由自动生成
+将根据当前路由自动生成
 
-<template>
-  <pro-breadcrumb />
-</template>
-
-<script>
-export default {}
-</script>
-
+::: demo
+@/demo/Breadcrumb/base.vue
 :::
 
 ### 配置
 
-| 参数            | 说明             | 类型   | 可选值 | 默认值                 |
-| :-------------- | :--------------- | :----- | :----- | :--------------------- |
-| routes          | 当前程序路由     | array  | -      | 从 `vue-router` 中获取 |
-| separator       | 分隔符           | string | -      | `/`                    |
-| separator-class | 图标分隔符 class | string | -      | -                      |
+| 参数           | 说明            | 类型   | 可选值 | 默认值 |
+| :------------- | :-------------- | :----- | :----- | :----- |
+| separator      | 分隔符          | string | -      | /      |
+| separator-icon | 图标分隔符 icon | string | -      | -      |

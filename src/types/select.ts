@@ -1,4 +1,4 @@
-import type { MaybeArray, UnknownObject, StringObject } from './index'
+import type { ExternalParam } from './index'
 
 export interface SelectConfig {
   value?: string
@@ -8,16 +8,12 @@ export interface SelectConfig {
   children?: string
 }
 
+export type SelectData = Record<string, ExternalParam>[]
+
 export interface SelectDataItem {
-  value: string | number
+  value: string | number | boolean
   label: string
   name?: string
-  disabled: boolean
+  disabled?: boolean
   children?: SelectDataItem[]
-}
-
-export interface ISelectProps {
-  modelValue: MaybeArray<string | number | boolean | StringObject>
-  data: Record<string, boolean | string | number | UnknownObject>[]
-  config?: SelectConfig
 }

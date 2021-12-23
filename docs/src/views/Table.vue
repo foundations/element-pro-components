@@ -8,7 +8,6 @@
     :index="index"
     :menu="menu"
     selection
-    expand
     align="center"
     size="small"
     @cell-click="test"
@@ -24,10 +23,11 @@
     <template #date="{ row }">
       - {{ row.date }} -
     </template>
-    <template #menu="{ size }">
+    <template #menu="{ size, row }">
       <el-button
         :size="size"
         type="text"
+        @click="test(row)"
       >
         test{{ size }}
       </el-button>
@@ -73,7 +73,6 @@ const columns = ref<ITableColumns<ListItem>>([
   {
     label: 'Date',
     prop: 'date',
-    slot: true,
     sortable: true,
   },
   {
@@ -98,7 +97,6 @@ const columns1 = ref<ITableColumns<ListItem>>([
       {
         label: 'Name',
         prop: 'name',
-        slot: true,
       },
       {
         label: 'Address',

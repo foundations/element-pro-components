@@ -13,82 +13,26 @@ meta:
 
 ### Basic Use
 
-::: demo By default, the component will generate routes from vue-router
+By default, the component will generate routes from vue-router, Go to <pro-link to="/zh-CN/guide/router">Router and Menu</pro-link> to view routing related usage
 
-<template>
-  <pro-menu class="docs-menu" />
-</template>
-
-<style>
-.docs-menu {
-  max-height: 400px;
-  overflow: scroll;
-}
-</style>
-
+::: demo
+@/demo/Menu/base.vue
 :::
 
 ### Custom Mode
 
-::: demo Set `mode` attribute to enable custom Mode
+Set `mode` attribute to enable custom Mode
 
-<template>
-  <pro-radio-button
-    v-model="mode"
-    :data="data"
-  />
-  <pro-menu :mode="mode" class="docs-menu" />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const mode = ref('horizontal')
-    const data = [
-      { value: 'vertical', label: 'Vertical' },
-      { value: 'horizontal', label: 'Horizontal' },
-    ]
-
-    return {
-      mode,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Menu/mode.vue
 :::
 
 ### Custom routes
 
-::: demo Set `routes` attribute to enable custom routes
+Set `routes` attribute to enable custom routes
 
-<template>
-  <pro-menu :routes="routes" class="docs-menu" />
-</template>
-
-<script>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-
-export default {
-  setup() {
-    const router = useRouter()
-    const routes = computed(() => {
-      const _routes = router.options.routes
-      return _routes.find(item => {
-        return item.path === '/en-US/components/'
-      })?.children || []
-    })
-
-    return {
-      routes,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Menu/routes.vue
 :::
 
 ### Slots
@@ -98,27 +42,7 @@ Starting from `0.12.0`, the internal menu will be implemented using svgicon by d
 :::
 
 ::: demo How to display the menu content through the default slot
-
-<template>
-  <pro-menu class="docs-menu">
-    <template #default="item">
-      <pro-link :to="item.path">
-        <i
-          v-if="item.meta?.icon"
-          :class="item.meta.icon"
-        />
-        <span v-if="item.meta?.title">
-          {{ item.meta.title }}
-        </span>
-      </pro-link>
-    </template>
-  </pro-menu>
-</template>
-
-<script>
-export default {}
-</script>
-
+@/demo/Menu/slots.vue
 :::
 
 ### Props

@@ -1,13 +1,17 @@
-import type { App } from 'vue'
 import { objectDeepMerge } from '../utils/index'
-import ProForm from './Form.vue'
+import ProForm from './Form'
+import props from './props'
 import type {
   InstallOptions,
-  IDefineComponent,
-  IFormProps,
+  IDefinePlugin,
+  IDefineProps,
 } from '../types/index'
 
-ProForm.install = (app: App, options?: InstallOptions) => {
+const _ProForm: IDefinePlugin<typeof ProForm> = ProForm as IDefinePlugin<
+  typeof ProForm
+>
+
+_ProForm.install = (app, options?: InstallOptions) => {
   if (options) {
     const _before = app.config.globalProperties.$PROOPTIONS as InstallOptions
     const _options = _before
@@ -16,7 +20,8 @@ ProForm.install = (app: App, options?: InstallOptions) => {
     app.config.globalProperties.$PROOPTIONS = _options
   }
 
-  app.component(ProForm.name, ProForm)
+  app.component(_ProForm.name, _ProForm)
 }
 
-export default ProForm as IDefineComponent<IFormProps>
+export default _ProForm
+export type IFormProps = IDefineProps<typeof props>

@@ -1,6 +1,208 @@
 # Changelog
 
-### 0.11.2
+## 0.16.4
+
+feat
+
+- add defineOptions
+- Form: add define function (`defineFormColumns` `defineFormMenuColumns` `defineFormSubmit`)
+- Table: add define function (`defineTableColumns` `defineTableMenuColumns` `defineTableSelectionColumns` `defineTableIndexColumns` `defineTableExpandColumns`)
+- Crud: add define function (`defineCrudColumns` `defineCrudMenuColumns` `defineCrudBeforeOpen` `defineCrudBeforeClose` `defineCrudSearch` `defineCrudSubmit`)
+- Descriptions: add define function (`defineDescriptionsColumns`)
+
+other
+
+- type: add IsAny to check any
+
+## 0.16.3
+
+fix
+
+- sync package name changes from @element-plus/icons-vue
+- sync css-variables name changes from Element
+- sync useLocale changes from Element
+
+other
+
+- refactor some function
+
+## 0.16.2
+
+fix
+
+- sync css variable name changes from Element
+- sync hook name change from Element
+- Form|Layout: remove warning message
+
+other
+
+- type: optimization type DeepKeyof
+
+## 0.16.1
+
+fix
+
+- Form: clear the default value
+
+feat
+
+- Form: add loading for slots menu-left and menu-right
+- Crud: add loading for slots form-menu-left and form-menu-right
+
+## 0.16.0
+
+fix
+
+- Form: missing icon on plus^1.2.0
+
+feat
+
+- Descriptions: support get nested value
+- Table: support get nested value
+- Form: support get and set nested value
+- Crud: support get and set nested value
+
+other
+
+- type: optimization type DeepKeyof
+
+## 0.15.0
+
+breaking changes
+
+- remove function findRouterPath
+
+fix
+
+- Menu: styles error
+- ColumnSetting: missing icon on plus^1.2.0
+
+feat
+
+- Descriptions: add ProDescriptions
+- Breadcrumb: realized by route.matched
+- add components as icon in router
+
+## 0.14.1
+
+fix
+
+- Crud: loss props to Table
+- Layout: the header z-index too high
+- Form: missing item in label slots
+
+feat
+
+- Select: add default slots
+
+## 0.14.0
+
+breaking changes
+
+- remove useVModel, use useVModel form vueuse replace
+- rename the GlobalComponents file element-pro-components to components
+- rename findRouterItemListByPath to findRouterPath
+
+fix
+
+- Menu: error style on horizontal mode
+- Table: display undefined when no value
+- Select|TreeSelect|Radio|Checkbox: cannot choose value 0
+
+feat
+
+- Layout: add prop fixed-header, fixed-main, mode and more
+- Tabs: close when leaving hidden router
+- Breadcrumb: add use router alias name to lookup
+- InputTag|AutocompleteTag: add max to limit the number of tag
+- Table: add root node
+
+other
+
+- refactor(all components): optimize type by render
+- types: optimization type
+
+## 0.13.2
+
+breaking changes
+
+- use useWindowSize from vueuse replace resize-observer-polyfill
+- use useAttrs from element-plus replace old useAttrs
+
+fix
+
+- Menu: missing style
+- Form: the default slot is not displayed
+- Crud: search slot error
+- Crud: show menuColumns when without slot
+
+feat
+
+- Form: support i18n
+- Crud: support i18n
+
+other
+
+- type: optimization type
+
+## 0.13.1
+
+fix
+
+- Table: missing size in slot parameter
+- Crud: slots error
+- Form: styles error on children form
+
+other
+
+- type: optimization type
+
+## 0.13.0
+
+breaking changes
+
+- Table: remove useTableSlotList
+- Form: remove useFormSlotList
+- Crud: remove useCrudAttrs
+
+feat
+
+- Table: Improve slot performance by render
+- Form: Improve slot performance by render
+- Crud: Improve slot performance by render
+- chore: synchronize changes in element row and col
+- type: add GlobalComponents (If you use VS Code with typescript to develop, You will need it)
+
+```diff
+// tsconfig.json
+{
+  "include": [
++   "node_modules/element-pro-components/types/element-pro-components.d.ts"
+  ]
+}
+```
+
+fix
+
+- Menu: horizontal style error
+
+## 0.12.0
+
+breaking changes
+
+- It is recommended to use component icons instead of font icons. reference [use-icon](https://tolking.github.io/element-pro-components/en-US/guide/router#use-icon)
+- Use css-variables of element-plus to replace a lot of original css-variables. [Compare](https://github.com/tolking/element-pro-components/commit/d22b10187403b37b83b34136e65d53ffc83076a1#diff-ca526a7b1a2c5b894cbb9a7a2dea0320aa294e4885e86ab038dd013c4c8336a6)
+
+feat
+
+- Link: add components ProLink
+- styles: add introduce styles through js
+
+fix
+
+- types: type error when building
+
+## 0.11.2
 
 fix
 

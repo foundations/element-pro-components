@@ -13,140 +13,42 @@ meta:
 
 ### 基础用法
 
-::: demo 使用 `pro-input-tag` 支持 type="text" 的大部分配置
+使用 `pro-input-tag` 支持 type="text" 的大部分配置
 
-<template>
-  <pro-input-tag
-    v-model="inputTags"
-    placeholder="请输入内容后点击空格按键"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const inputTags = ref([])
-
-    return {
-      inputTags
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/InputTag/base.vue
 :::
 
 ### 通过 Enter 键触发
 
-::: demo 指定 trigger 为 enter 时，将通过回车键触发输入
+默认通过空格键触发输入，通过 `trigger` 为 `enter`时，将通过回车键触发输入
 
-<template>
-  <pro-input-tag
-    v-model="inputTags1"
-    trigger="enter"
-    placeholder="请输入内容后点击回车按键"
-  />
-</template>
+::: demo
+@/demo/InputTag/trigger.vue
+:::
 
-<script>
-import { ref } from 'vue'
+### 限制输入数量
 
-export default {
-  setup() {
-    const inputTags1 = ref([])
+通过 `max` 可以配置可以输入标签的最大数量
 
-    return {
-      inputTags1
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/InputTag/max.vue
 :::
 
 ### 尺寸
 
-::: demo 可通过 size 属性指定输入框和标签的尺寸
+可通过 `size` 属性指定输入框和标签的尺寸
 
-<template>
-  <pro-input-tag
-    v-for="item in sizeList"
-    v-model="inputTags2"
-    :key="item"
-    :size="item"
-    placeholder="请输入内容后点击空格按键"
-    class="input-tag-size"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const inputTags2 = ref([])
-    const sizeList = ['medium', 'small', 'mini']
-
-    return {
-      inputTags2,
-      sizeList,
-    }
-  }
-}
-</script>
-
-<style>
-.input-tag-size {
-  margin-bottom: 10px;
-}
-.input-tag-size:last-child {
-  margin-bottom: 0;
-}
-</style>
-
+::: demo
+@/demo/InputTag/size.vue
 :::
 
 ### 带输入建议
 
-::: demo 使用 `pro-autocomplete-tag` 支持 autocomplete 的大部分配置
+`pro-autocomplete-tag` 提供输入建议，支持 autocomplete 的大部分配置
 
-<template>
-  <pro-autocomplete-tag
-    v-model="autocompleteTags"
-    :fetch-suggestions="querySearch"
-    placeholder="请输入内容后点击空格按键"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const autocompleteTags = ref([])
-    const list = [
-      { value: 'Go', tag: 'go' },
-      { value: 'JavaScript', tag: 'javascript' },
-      { value: 'Python', tag: 'python' },
-    ]
-
-    function querySearch(queryString, cb) {
-      cb(queryString ? list.filter(i => {
-        return i.value.indexOf(queryString.toLowerCase()) === 0
-      }) : list)
-    }
-
-    return {
-      autocompleteTags,
-      list,
-      querySearch,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/AutocompleteTag/base.vue
 :::
 
 ### InputTag 配置
@@ -155,6 +57,7 @@ export default {
 | :-------------- | :----------------------- | :------ | :-------------------------------- | :----- |
 | v-model         | 绑定值                   | array   | -                                 | -      |
 | trigger         | 触发输入按键             | string  | space / enter                     | space  |
+| max             | 可输入的最大数量         | number  | -                                 | -      |
 | size            | 尺寸                     | string  | medium / small / mini             | -      |
 | type            | tag 类型                 | string  | success / info / warning / danger | -      |
 | hit             | tag 是否有边框描边       | boolean | -                                 | false  |
@@ -176,8 +79,9 @@ export default {
 | label           | 输入框关联的 label 文字  | string  | -                                 | -      |
 | tabindex        | 输入框的 tabindex        | string  | -                                 | -      |
 | validate-event  | 输入时是否触发表单的校验 | boolean | -                                 | true   |
+| input-style     | input 元素的样式         | object  | -                                 | -      |
 
-### AutocompleteTag
+## AutocompleteTag
 
 > 基于 `ElTag` `ElAutocomplete` 的输入多个标签的输入框
 
@@ -187,6 +91,7 @@ export default {
 | :-------------------- | :------------------------------------- | :------------------------------ | :------------------------------------------------------------- | :----------- |
 | v-model               | 绑定值                                 | array                           | -                                                              | -            |
 | trigger               | 触发输入按键                           | string                          | space / enter                                                  | space        |
+| max                   | 可输入的最大数量                       | number                          | -                                                              | -            |
 | size                  | 尺寸                                   | string                          | medium / small / mini                                          | -            |
 | type                  | tag 类型                               | string                          | success / info / warning / danger                              | -            |
 | hit                   | tag 是否有边框描边                     | boolean                         | -                                                              | false        |

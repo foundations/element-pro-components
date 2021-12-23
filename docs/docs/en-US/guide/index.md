@@ -17,10 +17,16 @@ You may need the vue3 version of the scaffolding tool before you start
 
 ## Install
 
+[![Latest tag via npm](https://img.shields.io/npm/v/element-pro-components.svg?style=flat-square&logo=npm)](https://npmjs.com/package/element-pro-components)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/element-pro-components?label=size&logo=npm&style=flat-square)](https://npmjs.com/package/element-pro-components)
+[![Npm Last Updated](https://img.shields.io/badge/dynamic/json.svg?style=flat-square&logo=npm&label=last%20release&url=http%3A%2F%2Fregistry.npmjs.org%2Felement-pro-components&query=$.time.modified)](https://www.npmjs.com/package/element-pro-components)
+
 ```
+npm i element-pro-components
+# or
 yarn add element-pro-components
 # or
-npm i element-pro-components
+pnpm add element-pro-components
 ```
 
 ## Fully import
@@ -39,28 +45,44 @@ app.mount('#app')
 
 ## On demand
 
-### vite
+::: tip Tip
+Since `0.12.0`, it is recommended to use the js file in the style folder imported on demand instead of the css file to avoid repeated references of styles. (Note: Referencing js style files requires compilation tools to support ES modules)
+:::
 
-With the help of [vite-plugin-style-import](https://github.com/anncwb/vite-plugin-style-import), we can import components styles we actually need
+### Recommended unplugin-vue-components
 
-- install
+Installation and use view [unplugin-vue-components](https://www.npmjs.com/package/unplugin-vue-components)
 
+- Configuration information
+
+```js
+{
+  resolvers: [
+    (name) => {
+      if (name.startsWith('Pro')) {
+        const fileName = name.slice(3).replace(/\B([A-Z])/g, '-$1').toLocaleLowerCase()
+        return {
+          importName: name,
+          path: 'element-pro-components',
+          sideEffects: `element-pro-components/lib/styles/${fileName}`
+        }
+      }
+    }
+  ],
+}
 ```
-yarn add -D vite-plugin-style-import
-# or
-npm i -D vite-plugin-style-import
-```
+
+### Use vite-plugin-style-import in vite
+
+Installation and use view [vite-plugin-style-import](https://github.com/anncwb/vite-plugin-style-import)
 
 - change vite.config
 
 ```js
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import styleImport from 'vite-plugin-style-import'
 
-export default defineConfig({
+export default {
   plugins: [
-    vue(),
     styleImport({
       libs: [
         {
@@ -68,27 +90,18 @@ export default defineConfig({
           libraryName: 'element-pro-components',
           ensureStyleFile: true,
           resolveStyle: (name) => {
-            name = name.slice(4)
-            return `element-pro-components/lib/styles/${name}.css`
+            return `element-pro-components/lib/styles/${name.slice(4)}.css`
           },
         },
       ],
     }),
   ],
-})
+}
 ```
 
-### vue-cli
+### Use babel-plugin-import in vue-cli
 
-With the help of [babel-plugin-import](https://github.com/ant-design/babel-plugin-import), we can import components styles we actually need
-
-- install
-
-```
-yarn add -D babel-plugin-import
-# or
-npm i -D babel-plugin-import
-```
+Installation and use view [babel-plugin-import](https://github.com/ant-design/babel-plugin-import)
 
 - change babel.config
 
@@ -100,8 +113,7 @@ module.exports = {
       {
         libraryName: 'element-pro-components',
         customStyleName: (name) => {
-          name = name.slice(4)
-          return `element-pro-components/lib/styles/${name}.css`
+          return `element-pro-components/lib/styles/${name.slice(4)}.css`
         },
       },
     ],
@@ -118,26 +130,8 @@ import { ProLayout } from 'element-pro-components'
 import 'element-pro-components/lib/styles/layout.css'
 ```
 
-Next, you need to introduce the css variable file
-
-```js
-import { createApp } from 'vue'
-import App from './App.vue'
-import { ProLayout } from 'element-pro-components'
-// Unless you redefine all css variables, you need to manually import css variable files
-import 'element-pro-components/lib/styles/vars.css'
-
-const app = createApp(App)
-
-app.use(ProLayout)
-// or
-app.component('ProLayout', ProLayout)
-
-app.mount('#app')
-```
-
 ::: tip Tip
-Component list reference [components](https://github.com/tolking/element-pro-components/blob/master/src/index.ts)
+Component list reference [components](https://github.com/tolking/element-pro-components/blob/master/src/components.ts)
 
 In addition to components, you can also use some internal [utils](https://github.com/tolking/element-pro-components/blob/master/src/utils/) or [composables](https://github.com/tolking/element-pro-components/blob/master/src/composables/)
 :::
@@ -160,20 +154,40 @@ app.use(ElementPro, {
 })
 ```
 
-::: tip Tip
-If you use on demand import components, you can inject global config through one of `ProCrud` `ProForm` `ProTable`
-:::
+- On-demand
+
+```js
+import { defineOptions } from 'element-pro-components'
+
+const options = defineOptions({
+  pagination: {
+    small: true,
+    hideOnSinglePage: true,
+    layout: 'prev, pager, next',
+  },
+})
+
+app.config.globalProperties.$PROOPTIONS = options
+```
 
 ## Start using
 
 ::: tip Tip
 Document example based on [Composition API](https://v3.vuejs.org/guide/composition-api-introduction.html), If you are not familiar with the syntax, please visit the official document
 
-If you use VS Code to develop, cooperate with Vetur to provide complete components, prop, and event completion. example: input `<pro-` will list all components
+If you use VS Code to develop, cooperate with [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur) to provide complete components, prop, and event completion. example: input `<pro-` will list all components
+
+If you use VS Code with typescript to develop, It is recommended to use plug-in [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar). Just add to the `include` field in the `tsconfig.json` file
+
+```diff
+{
+  "include": [
++   "node_modules/element-pro-components/types/components.d.ts"
+  ]
+}
+```
 
 If you use webstorm to develop, complete components, prop, and event completions
-
-If you use TypeScript to develop, You can refer to the [example](https://github.com/tolking/element-pro-components/tree/master/docs/src/views/), Some types are provided internally for easy use
 :::
 
 <<< @/docs/src/layout/Layout.vue

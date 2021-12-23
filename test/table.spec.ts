@@ -1,6 +1,7 @@
 import { ComponentPublicInstance, ref } from 'vue'
 import { mount, VueWrapper } from '@vue/test-utils'
-import ProTable from '../src/Table/Table.vue'
+import { ElTableColumn } from 'element-plus'
+import ProTable from '../src/Table/Table'
 import { config } from '../src/utils/config'
 import { tableData, TableItem } from './mock'
 import type {
@@ -9,7 +10,7 @@ import type {
   ITableExpandColumns,
   ITableMenuColumns,
   IPagination,
-} from '../src/types/index'
+} from '../src/Table/index'
 
 const columns: ITableColumns = [
   {
@@ -27,7 +28,7 @@ const columns: ITableColumns = [
 ]
 const _mount = (options: Record<string, unknown>) =>
   mount({
-    components: { ProTable },
+    components: { ProTable, ElTableColumn },
     ...options,
   })
 const headerClass =
@@ -54,13 +55,15 @@ const getBodyClass = (wrapper: VueWrapper<ComponentPublicInstance>) =>
 const getCheckBox = (wrapper: VueWrapper<ComponentPublicInstance>) =>
   wrapper.find(headerClass + ' th .cell .el-checkbox')
 const getPager = (wrapper: VueWrapper<ComponentPublicInstance>, classes = '') =>
-  wrapper.find('.pro-pagination .el-pager .number' + classes)
+  wrapper.find('.el-pagination .el-pager .number' + classes)
 const getSizesItem = (classes = '') =>
   document.querySelector(
     '.el-select__popper .el-select-dropdown__item' + classes
   )
+const appendClass =
+  '.pro-table .el-table__body-wrapper .el-table__append-wrapper .append'
 
-describe('Table.vue', () => {
+describe('Table', () => {
   afterEach(() => {
     document.body.innerHTML = ''
   })
@@ -69,7 +72,7 @@ describe('Table.vue', () => {
     const wrapper = await _mount({
       template: '<pro-table :columns="columns" />',
       setup() {
-        return { columns: ref(columns) }
+        return { columns: ref([...columns]) }
       },
     })
     const vm = (wrapper.vm as unknown) as { columns: ITableColumns }
@@ -135,7 +138,13 @@ describe('Table.vue', () => {
 
   test('expand', async () => {
     const wrapper = await _mount({
-      template: '<pro-table :columns="columns" :expand="expand" />',
+      template: `
+        <pro-table :columns="columns" :expand="expand">
+          <template #expand="{ row }">
+            {{ row }}
+          </template>
+        </pro-table>
+      `,
       setup() {
         const expand = ref<boolean | ITableExpandColumns>({ label: '>' })
         return { columns, expand }
@@ -178,7 +187,13 @@ describe('Table.vue', () => {
 
   test('menu', async () => {
     const wrapper = await _mount({
-      template: '<pro-table :columns="columns" :menu="menu" />',
+      template: `
+        <pro-table :columns="columns" :menu="menu">
+          <template #menu="{ size }">
+            <button>{{ size }}</button>
+          </template>
+        </pro-table>
+      `,
       setup() {
         const menu = ref<boolean | ITableMenuColumns>({ label: 'Menu' })
         return { columns, menu }
@@ -228,7 +243,7 @@ describe('Table.vue', () => {
       pagination: IPagination
     }
 
-    expect(wrapper.find('.pro-pagination')).not.toBeNull()
+    expect(wrapper.find('.el-pagination')).not.toBeNull()
 
     await getPager(wrapper, ':nth-child(2)').trigger('click')
     expect(vm.currentPage).toBe(2)
@@ -241,20 +256,20 @@ describe('Table.vue', () => {
 
     await (vm.pageSize = 10)
     await wrapper
-      .find('.pro-pagination .el-pagination__sizes .select-trigger')
+      .find('.el-pagination .el-pagination__sizes .select-trigger')
       .trigger('click')
     expect(getSizesItem('.selected')?.innerHTML).toMatch(/10/)
 
     await (vm.pagination.layout = 'sizes, prev, pager, next')
-    expect(wrapper.find('.pro-pagination .el-pagination__total').exists()).toBe(
+    expect(wrapper.find('.el-pagination .el-pagination__total').exists()).toBe(
       false
     )
-    expect(wrapper.find('.pro-pagination .el-pagination__jump').exists()).toBe(
+    expect(wrapper.find('.el-pagination .el-pagination__jump').exists()).toBe(
       false
     )
 
     await (vm.total = 0)
-    expect(wrapper.find('.pro-pagination').exists()).toBe(false)
+    expect(wrapper.find('.el-pagination').exists()).toBe(false)
   })
 
   test('align', async () => {
@@ -311,18 +326,29 @@ describe('Table.vue', () => {
           <template #menu="{ size }">
             @menu-{{ size }}
           </template>
+          <template #default>
+            <el-table-column
+              prop="address"
+              label="default"
+            />
+          </template>
+          <template #append>
+            <p class="append">append slot</p>
+          </template>
         </pro-table>
       `,
       setup() {
         const _columns = [...columns]
-        _columns[0].slot = true
         return { columns: _columns, data: tableData, menu: { label: 'Menu' } }
       },
     })
 
+    expect(getHeaderList(wrapper)).toHaveLength(5)
     expect(getHeaderList(wrapper)).toContain('date-header')
+    expect(getHeaderList(wrapper)).toContain('default')
     expect(getBodyItem(wrapper)[0]).toMatch(/^@date-/)
-    expect(getBodyItem(wrapper)[3]).toMatch(/^@menu-/)
+    expect(getBodyItem(wrapper)[4]).toMatch(/^@menu-/)
+    expect(wrapper.find(appendClass).text()).toBe('append slot')
   })
 
   test('multi header', async () => {
@@ -358,5 +384,42 @@ describe('Table.vue', () => {
 
     await (vm.columns = columns)
     expect(getMultiHeader(wrapper)).toHaveLength(1)
+  })
+
+  test('Nested value', async () => {
+    const wrapper = await _mount({
+      template: '<pro-table :columns="columns" :data="data" />',
+      setup() {
+        const columns = [
+          {
+            label: 'Default',
+            prop: 'b.c',
+          },
+          {
+            label: 'Object',
+            prop: 'b.d',
+          },
+          {
+            label: 'Array',
+            prop: 'd[0].e',
+          },
+        ]
+        const data = [
+          {
+            'b.c': 'break nested value',
+            b: {
+              c: 'nested value c in b',
+              d: 'nested value d in b',
+            },
+            d: [{ e: 'nested value in array' }],
+          },
+        ]
+        return { columns, data }
+      },
+    })
+
+    expect(getBodyItem(wrapper, 1)[0]).toBe('break nested value')
+    expect(getBodyItem(wrapper, 1)[1]).toBe('nested value d in b')
+    expect(getBodyItem(wrapper, 1)[2]).toBe('nested value in array')
   })
 })

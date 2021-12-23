@@ -1,60 +1,23 @@
-import {
-  ComputedRef,
-  computed,
-  Ref,
-  unref,
-  inject,
-  getCurrentInstance,
-  shallowRef,
-} from 'vue'
+import { ComputedRef, computed, Ref, unref, inject, shallowRef } from 'vue'
+import { useLocale } from 'element-plus'
 import { useProOptions, useShow } from './index'
 import {
-  filterFlat,
   isObject,
   objectDeepMerge,
-  objectPick,
   objectOmit,
   isBoolean,
 } from '../utils/index'
 import type {
-  FormColumn,
-  FormMenu,
-  IFormColumns,
   IComponentSize,
+  UnknownObject,
+  MaybeArray,
+  MaybeRef,
+  FormColumn,
   IFormExpose,
   IFormValidateCallback,
   IFormValidateFieldCallback,
-  UnknownObject,
   IFormMenuColumns,
-  MenuOptions,
-  DeepKeyof,
-  MaybeArray,
-  MaybeRef,
 } from '../types/index'
-
-interface FormSlot extends FormColumn {
-  labelSlot: string
-  errorSlot: string
-}
-
-export function useFormSlotList(
-  columns: MaybeRef<IFormColumns>
-): ComputedRef<FormSlot[]> {
-  return computed(() => {
-    const _columns = unref(columns)
-
-    return filterFlat<IFormColumns, FormSlot[]>(
-      _columns,
-      'slot',
-      true,
-      (item) => {
-        item.labelSlot = item.prop + '-label'
-        item.errorSlot = item.prop + '-error'
-        return item as FormSlot
-      }
-    )
-  })
-}
 
 type FormItemBind = Omit<
   FormColumn,
@@ -98,7 +61,7 @@ export function useFormItemBind(
     ]
     const _currentBind = unref(currentBind)
     const _option = isObject(_currentBind)
-      ? objectOmit<FormColumn, FormItemBind>(_currentBind, omitKeys)
+      ? objectOmit<FormColumn>(_currentBind, omitKeys)
       : ({} as FormColumn)
 
     _option.size = _option.size || useFormSize().value
@@ -109,39 +72,48 @@ export function useFormItemBind(
 export function useFormMenu(
   props: Readonly<{ menu?: IFormMenuColumns }>
 ): ComputedRef<IFormMenuColumns> {
+  const localeMenu = computed(() => {
+    const { t } = useLocale()
+    const submitText = t('pro.form.submit')
+    const resetText = t('pro.form.reset')
+    const menu: IFormMenuColumns = {}
+
+    if (submitText && submitText !== 'pro.form.submit') {
+      menu.submitText = submitText
+    }
+    if (resetText && resetText !== 'pro.form.reset') {
+      menu.resetText = resetText
+    }
+
+    return menu
+  })
+
   return computed(() => {
     const options = useProOptions()
-    const pickKeys: Array<keyof FormMenu> = [
-      'submit',
-      'submitText',
-      'submitProps',
-      'reset',
-      'resetText',
-      'resetProps',
-    ]
-    const formMenu = objectPick<MenuOptions, IFormMenuColumns>(
+    const defaultMenu = objectDeepMerge<IFormMenuColumns>(
       options.menu,
-      pickKeys
+      localeMenu.value
     )
+
     return props.menu
-      ? objectDeepMerge<IFormMenuColumns>(formMenu, props.menu)
-      : formMenu
+      ? objectDeepMerge<IFormMenuColumns>(defaultMenu, props.menu)
+      : defaultMenu
   })
 }
 
-export function useFormMethods<T = UnknownObject>(
+export function useFormMethods(
   emit: (
     event: 'update:modelValue' | 'submit' | 'reset',
     ...args: unknown[]
   ) => void
 ): {
-  form: Ref<IFormExpose<T>>
+  form: Ref<IFormExpose>
   loading: Ref<boolean>
   upFormData: (value: unknown) => void
   submitForm: () => void
   resetForm: (reset?: boolean) => void
-} & IFormExpose<T> {
-  const form = shallowRef<IFormExpose<T>>({} as IFormExpose<T>)
+} & IFormExpose {
+  const form = shallowRef<IFormExpose>({} as IFormExpose)
   const { show, toggleShow } = useShow()
 
   function validate(callback?: IFormValidateCallback) {
@@ -152,12 +124,12 @@ export function useFormMethods<T = UnknownObject>(
     form.value.resetFields()
   }
 
-  function clearValidate(props?: MaybeArray<DeepKeyof<T>>) {
+  function clearValidate(props?: MaybeArray<string>) {
     form.value.clearValidate(props)
   }
 
   function validateField(
-    props: MaybeArray<DeepKeyof<T>>,
+    props: MaybeArray<string>,
     cb: IFormValidateFieldCallback
   ) {
     form.value.validateField(props, cb)
@@ -204,27 +176,14 @@ export function useFormMethods<T = UnknownObject>(
   }
 }
 
-interface ElInstallOptions {
-  size: IComponentSize
-  zIndex: number
-  locale?: unknown
-}
-
-function useGlobalConfig(): ElInstallOptions {
-  const vm = getCurrentInstance()
-  const proxy = (vm?.proxy || {}) as { $ELEMENT: ElInstallOptions }
-  return ('$ELEMENT' in proxy ? proxy.$ELEMENT : {}) as ElInstallOptions
-}
-
 export function useFormSize(
   props?: Readonly<{ size?: IComponentSize }>
 ): ComputedRef<IComponentSize> {
   const elForm = inject<{ size?: IComponentSize }>('elForm', {})
   const elFormItem = inject<{ size?: IComponentSize }>('elFormItem', {})
-  const elConfig = useGlobalConfig()
 
   return computed(() => {
-    return props?.size || elFormItem.size || elForm.size || elConfig.size
+    return props?.size || elFormItem.size || elForm.size
   })
 }
 

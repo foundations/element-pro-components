@@ -13,145 +13,34 @@ meta:
 
 ### Basic Use
 
-::: demo Set `data` attribute will automatic generate options
+Set `data` attribute will automatic generate options
 
-<template>
-  <pro-radio
-    v-model="radio"
-    :data="data"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const radio = ref('')
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      radio,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Radio/base.vue
 :::
 
 ### Disabled State
 
-::: demo Set the `disabled` attribute in prop `data`
+Set the `disabled` attribute in prop `data`
 
-<template>
-  <pro-radio
-    v-model="radio1"
-    :data="list"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const radio1 = ref('')
-    const list = ref([
-      { value: 'Go', label: 'go', disabled: true },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      radio1,
-      list,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Radio/disabled.vue
 :::
 
 ### Configure binding data key value
 
-::: demo Set `config` attribute. `value`- v-model bind key; `label`- display key; `disabled`- Disabled key; `name`- name key
+Set `config` attribute. `value`- v-model bind key; `label`- display key; `disabled`- Disabled key; `name`- name key
 
-<template>
-  <pro-radio
-    v-model="radio2"
-    :data="data"
-    :config="config"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const radio2 = ref('')
-    const config = ref({ value: 'label', label: 'value' })
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      radio2,
-      config,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Radio/config.vue
 :::
 
 ### Button style
 
-::: demo use `pro-radio-button` then checkbox with button styles
+use `pro-radio-button` then checkbox with button styles
 
-<template>
-  <pro-radio-button
-    v-model="radiobutton"
-    :data="data"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const radiobutton = ref('')
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      radiobutton,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/RadioButton/base.vue
 :::
 
 ### Radio Props
@@ -172,7 +61,7 @@ export default {
 | ---------- | ------------------------------------- | ----------------------------------- |
 | change     | triggers when the bound value changes | the label value of the chosen radio |
 
-### RadioButton
+## RadioButton
 
 > Single selection among multiple options
 

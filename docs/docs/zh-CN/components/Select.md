@@ -13,199 +13,50 @@ meta:
 
 ### 基础用法
 
-::: demo 传入 data 数据，自动生成选项
+传入 data 数据，自动生成选项
 
-<template>
-  <pro-select
-    v-model="select"
-    :data="data"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const select = ref('')
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      select,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Select/base.vue
 :::
 
 ### 控制不可选项目
 
-::: demo 将传入 data 数据中的某项设置为 `disabled: true` 即可
+将传入 data 数据中的某项设置为 `disabled: true` 即可
 
-<template>
-  <pro-select
-    v-model="select1"
-    :data="list"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const select1 = ref('')
-    const list = ref([
-      { value: 'Go', label: 'go', disabled: true },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      select1,
-      list,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Select/disabled.vue
 :::
 
 ### 配置绑定数据键值
 
-::: demo 通过 config 配置数据键值。`value`- v-model 绑定的键值、`label`-显示键值、`disabled`-控制不可选的键值、`children`-子分组的键值
+通过 config 配置数据键值。`value`- v-model 绑定的键值、`label`-显示键值、`disabled`-控制不可选的键值、`children`-子分组的键值
 
-<template>
-  <pro-select
-    v-model="select2"
-    :data="data"
-    :config="config"
-  />
-</template>
+::: demo
+@/demo/Select/config.vue
+:::
 
-<script>
-import { ref } from 'vue'
+### 使用插槽
 
-export default {
-  setup() {
-    const select2 = ref('')
-    const config = ref({ value: 'label', label: 'value' })
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
+通过默认插槽可以自定义备选项
 
-    return {
-      select2,
-      config,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Select/slots.vue
 :::
 
 ### 开启多选
 
-::: demo 当 `multiple` 为 `true` 时，启用多选。此时绑定的 model-value 为数组格式
+当 `multiple` 为 `true` 时，启用多选。此时绑定的 model-value 为数组格式
 
-<template>
-  <pro-select
-    v-model="select3"
-    :data="data"
-    multiple
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const select3 = ref([])
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      select3,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Select/multiple.vue
 :::
 
 ### 分组
 
-::: demo 通过 `data` 中的 `children` 字段配置可以轻松生成分组展示 (如果有多层分组，推荐使用 `TreeSelect`)
+通过 `data` 中的 `children` 字段配置可以轻松生成分组展示 (如果有多层分组，推荐使用 `TreeSelect`)
 
-<template>
-  <pro-select
-    v-model="select4"
-    :data="data1"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const select4 = ref('')
-    const data1 = ref([{
-      label: '热门城市',
-      children: [{
-        value: 'Shanghai',
-        label: '上海'
-      }, {
-        value: 'Beijing',
-        label: '北京'
-      }]
-    }, {
-      label: '城市名',
-      children: [{
-        value: 'Chengdu',
-        label: '成都'
-      }, {
-        value: 'Shenzhen',
-        label: '深圳'
-      }, {
-        value: 'Guangzhou',
-        label: '广州'
-      }, {
-        value: 'Dalian',
-        label: '大连'
-      }]
-    }])
-
-    return {
-      select4,
-      data1,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Select/group.vue
 :::
 
 ### 配置
@@ -250,3 +101,9 @@ export default {
 | clear          | 可清空的单选模式下用户点击清空按钮时触发 | —                             |
 | blur           | 当 input 失去焦点时触发                  | (event: Event)                |
 | focus          | 当 input 获得焦点时触发                  | (event: Event)                |
+
+### 插槽
+
+| 名称 | 说明                          |
+| ---- | ----------------------------- |
+| -    | 自定插槽内容，参数为 { data } |

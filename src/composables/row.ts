@@ -1,5 +1,5 @@
 // NOTE modify from element-plus, if a same hooks is added to the element-plus, replace this file by hooks
-import { ComputedRef, computed, provide } from '@vue/runtime-core'
+import { ComputedRef, computed, provide } from 'vue'
 import type { IRowProps } from '../types/index'
 
 export function useRow(
@@ -11,7 +11,8 @@ export function useRow(
   }>
   rowClass: ComputedRef<string[]>
 } {
-  provide('ElRow', props.gutter)
+  const gutter = computed(() => props.gutter)
+  provide('ElRow', { gutter })
 
   const rowStyle = computed(() => {
     const ret = {
@@ -27,13 +28,8 @@ export function useRow(
 
   const rowClass = computed(() => [
     'el-row',
-    props.justify && props.justify !== 'start'
-      ? `is-justify-${props.justify}`
-      : '',
-    props.align && ['middle', 'bottom'].includes(props.align)
-      ? `is-align-${props.align}`
-      : '',
-    props.type === 'flex' ? 'el-row--flex' : '',
+    props.justify !== 'start' ? `is-justify-${props.justify}` : '',
+    props.align !== 'top' ? `is-align-${props.align}` : '',
   ])
 
   return {

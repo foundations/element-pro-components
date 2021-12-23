@@ -1,51 +1,23 @@
 import { ComputedRef, computed, Ref, unref, shallowRef } from 'vue'
 import { useProOptions } from './index'
-import {
-  filterFlat,
-  filterDeep,
-  isObject,
-  objectDeepMerge,
-} from '../utils/index'
+import { filterDeep, isObject, objectDeepMerge } from '../utils/index'
 import type {
-  TableColumn,
+  UnknownObject,
+  StringObject,
+  MaybeRef,
+  MaybeArray,
+  ExternalParam,
   ITableColumns,
   TableColumnsProps,
   ITableExpose,
   IPagination,
-  UnknownObject,
-  StringObject,
-  DeepKeyof,
-  MaybeRef,
-  MaybeArray,
 } from '../types/index'
 
 export function useTableColumns(
-  props: Readonly<{ columns: ITableColumns }>
+  props: Readonly<{ columns?: ITableColumns }>
 ): ComputedRef<ITableColumns> {
   return computed<ITableColumns>(() => {
     return filterDeep(props.columns || [], 'hide', false)
-  })
-}
-
-interface TableSlot extends TableColumn {
-  header: string
-}
-
-export function useTableSlotList(
-  columns: MaybeRef<ITableColumns>
-): ComputedRef<TableSlot[]> {
-  return computed(() => {
-    const _columns = unref(columns)
-
-    return filterFlat<ITableColumns, TableSlot[]>(
-      _columns,
-      'slot',
-      true,
-      (item) => {
-        item.header = item.prop + '-header'
-        return item as TableSlot
-      }
-    )
   })
 }
 
@@ -59,26 +31,21 @@ export function useTableDefaultBind(
   }))
 }
 
-interface ColumnsBind extends StringObject {
-  slot?: boolean
-  children?: unknown
-}
-
-export function useTableBind<T extends ColumnsBind>(
+export function useTableBind<T extends Record<string, ExternalParam>>(
   currentBind?: MaybeRef<boolean | undefined | T>,
   defaultBind?: MaybeRef<TableColumnsProps>
-): ComputedRef<T> {
+): ComputedRef<StringObject> {
   return computed(() => {
     const _currentBind = unref(currentBind)
     const _defaultBind = unref(defaultBind)
     const _option = isObject(_currentBind) ? { ..._currentBind } : undefined
 
     if (_option) {
-      _option.slot && (_option.slot = undefined)
+      _option.slot && delete _option.slot
       _option.children && delete _option.children
     }
 
-    return Object.assign({} as T, _defaultBind, _option)
+    return Object.assign({} as StringObject, _defaultBind, _option)
   })
 }
 
@@ -111,7 +78,7 @@ export function useTableMethods<T = UnknownObject>(): {
     table.value.clearSort()
   }
 
-  function clearFilter(columnKeys?: MaybeArray<DeepKeyof<T>>) {
+  function clearFilter(columnKeys?: MaybeArray<string>) {
     table.value.clearFilter(columnKeys)
   }
 
@@ -119,7 +86,7 @@ export function useTableMethods<T = UnknownObject>(): {
     table.value.doLayout()
   }
 
-  function sort(prop: DeepKeyof<T>, order: string) {
+  function sort(prop: string, order: string) {
     table.value.sort(prop, order)
   }
 

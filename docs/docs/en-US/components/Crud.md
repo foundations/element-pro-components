@@ -13,952 +13,98 @@ meta:
 
 ### Basic Use
 
+When columns is bound to a reactive array, changes in the array will affect Crud changes (dynamic Crud). If you don't need a dynamic Crud, it is recommended to bind an ordinary array.
+
 ::: demo Set `add` `edit` `form` `hide` `search` in `columns` attribute will automatic generate crud
+@/demo/Crud/base.vue
+:::
 
-<template>
-  <pro-crud
-    v-model="form"
-    v-model:search="serachForm"
-    :columns="columns"
-    :menu="{ label: 'Operations' }"
-    :data="data"
-    @search="search"
-    @submit="submit"
-    @delete="deleteRow"
-  />
-</template>
+### Intellisense
 
-<script>
-import { ref } from 'vue'
+Use the `defineCrudColumns` `defineCrudMenuColumns` `defineCrudBeforeOpen` `defineCrudBeforeClose` `defineCrudSearch` `defineCrudSubmit` to make it easier to define columns
 
-export default {
-  setup() {
-    const form = ref({})
-    const serachForm = ref({})
-    const columns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-input',
-        add: true,
-        edit: true,
-        search: true,
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-        add: true,
-        search: true,
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-        component: 'el-input',
-        add: true,
-        edit: true,
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
+::: demo
+@/demo/Crud/define.vue
+:::
 
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
+### Nested value
 
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form,
-      serachForm,
-      data,
-      columns,
-      search,
-      submit,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/nested.vue
 :::
 
 ### Custom Menu
 
-::: demo By default, the add, edit, and delete buttons are not displayed, you need to pass in `true` or config through the menu to display
+By default, the add, edit, and delete buttons are not displayed, you need to config through the menu or use menu slot to display
 
-<template>
-  <pro-crud
-    v-model="form1"
-    v-model:search="serachForm1"
-    :columns="columns1"
-    :menu="menu"
-    :data="data"
-    @search="search"
-    @searchReset="reset"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
+Menu can also be configured through <pro-link to="/en-US/guide/#global-config">Global config</pro-link> or <pro-link to="/en-US/guide/i18n">Localization</pro-link>
 
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const menu = ref({
-      label: 'Operations',
-      addText: 'New',
-      editText: 'Edit',
-      delText: 'Clean',
-      searchText: 'Search',
-      searchResetText: 'Reset Seaarch',
-      submitText: 'Create',
-      resetText: 'Reset Form',
-      edit: (row) => row.date !== '2016-05-02',
-      del: (row) => row.date !== '2016-05-04',
-      searchReset: false,
-      editProps: { type: 'default', plain: true },
-      delProps: { type: 'danger', plain: true },
-    })
-    const form1 = ref({})
-    const serachForm1 = ref({})
-    const columns1 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-input',
-        form: true,
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-        form: true,
-        search: true,
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-        component: 'el-input',
-        form: true,
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form1,
-      serachForm1,
-      columns,
-      menu,
-      data,
-      search,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/menu.vue
 :::
 
 ### Custom Search
 
-::: demo Set `form-columns` attribute to enable custom search, same as Form columns
+Set `search-columns` attribute to enable custom search, same as Form columns
 
-<template>
-  <pro-crud
-    v-model:search="serachForm2"
-    :columns="columns2"
-    :search-columns="searchColumns"
-    @search="search"
-    @searchReset="reset"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const serachForm2 = ref({})
-    const columns2 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const searchColumns = ref([
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '-',
-          startPlaceholder: 'start',
-          endPlaceholder: 'end',
-        }
-      }
-    ])
-
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset search')
-    }
-
-    return {
-      serachForm2,
-      columns1,
-      search,
-      reset,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/search.vue
 :::
 
 ### Custom Add Form
 
-::: demo Set `add-columns` attribute to enable custom search, same as Form columns
+Set `add-columns` attribute to enable custom search, same as Form columns
 
-<template>
-  <pro-crud
-    v-model="form3"
-    :columns="columns2"
-    :add-columns="addColumns"
-    :menu="true"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form3 = ref({})
-    const columns2 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const addColumns = ref([
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '-',
-          startPlaceholder: 'start',
-          endPlaceholder: 'end',
-        }
-      }
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    return {
-      form3,
-      columns2,
-      addColumns,
-      submit,
-      reset,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/add.vue
 :::
 
 ### Custom Edit Form
 
-::: demo Set `edit-columns` attribute to enable custom search, same as Form columns
+Set `edit-columns` attribute to enable custom search, same as Form columns
 
-<template>
-  <pro-crud
-    v-model="form4"
-    :columns="columns4"
-    :edit-columns="editColumns"
-    :menu="true"
-    :data="data"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form4 = ref({})
-    const columns4 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-input',
-        add: true,
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const editColumns = ref([
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '-',
-          startPlaceholder: 'start',
-          endPlaceholder: 'end',
-        }
-      }
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form4,
-      columns4,
-      editColumns,
-      data,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/edit.vue
 :::
 
 ### Custom Form
 
-::: demo Set `form-columns` attribute to enable custom search, same as Form columns. It will act on both add and edit form
+Set `form-columns` attribute to enable custom search, same as Form columns. It will act on both add and edit form
 
-<template>
-  <pro-crud
-    v-model="form5"
-    :columns="columns2"
-    :form-columns="formColumns"
-    :menu="true"
-    :data="data"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form5 = ref({})
-    const columns2 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const formColumns = ref([
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '-',
-          startPlaceholder: 'start',
-          endPlaceholder: 'end',
-        }
-      }
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form5,
-      columns2,
-      formColumns,
-      data,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/form.vue
 :::
 
 ### Custom Table
 
-::: demo Set `table-columns` attribute to enable custom search, same as Table columns
+Set `table-columns` attribute to enable custom search, same as Table columns
 
-<template>
-  <pro-crud
-    v-model="form6"
-    v-model:search="serachForm6"
-    :columns="columns6"
-    :table-columns="tableColumns"
-    :menu="{ label: 'Operations' }"
-    :data="data"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form6 = ref({})
-    const serachForm6 = ref({})
-    const columns6 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-input',
-        form: true,
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-        form: true,
-        search: true,
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-        component: 'el-input',
-      },
-    ])
-    const tableColumns = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-      },
-      {
-        label: 'User',
-        children: [
-          {
-            label: 'Name',
-            prop: 'name',
-          },
-          {
-            label: 'Address',
-            prop: 'address',
-          },
-        ],
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form6,
-      serachForm6,
-      columns6,
-      tableColumns,
-      data,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/table.vue
 :::
 
 ### Trigger Dialog
 
-::: demo Set `before-open` or `before-close` attribute to enable perform an operation before Dialog is opened or before Dialog is closed
+Set `before-open` or `before-close` attribute to enable perform an operation before Dialog is opened or before Dialog is closed
 
-<template>
-  <pro-crud
-    v-model="form7"
-    :columns="columns7"
-    :menu="{ label: 'Operations' }"
-    :data="data"
-    :before-open="beforeOpen"
-    :before-close="beforeClose"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form7 = ref({})
-    const columns7 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-input',
-        form: true,
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    function beforeOpen(done, type, row) {
-      console.log('beforeOpen', type, row)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    function beforeClose(done) {
-      console.log('beforeClose')
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    return {
-      form7,
-      columns7,
-      data,
-      beforeOpen,
-      beforeClose,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/dialog.vue
 :::
 
 ### Slots
 
-::: demo Set `slot` in `columns` attribute to enable custom slot. After set, you can use the related slots with `[prop]`, otherwise only the slots without `[prop]` will take effect
+Use simple <pro-link to="https://v3.vuejs.org/guide/render-function.html">render-function</pro-link> by `render` in `columns`. or directly add some slot with `[prop]` in the template.
 
-<template>
-  <pro-crud
-    v-model="form8"
-    v-model:search="serachForm8"
-    :columns="columns8"
-    :menu="{ label: 'Operations' }"
-    :data="data"
-    selection
-    @search="search"
-    @submit="submit"
-    @delete="deleteRow"
-  >
-    <template #menu-right="{ size }">
-      <el-button
-        :size="size"
-        type="danger"
-      >
-        Remove
-      </el-button>
-    </template>
-    <template #menu="{ size }">
-      <el-button
-        :size="size"
-        type="text"
-      >
-        Detail
-      </el-button>
-    </template>
-    <template #form-name>
-      <span>form slot</span>
-    </template>
-    <template #table-name="{ row, size }">
-      <el-tag :size="size">
-        {{ row?.name }}
-      </el-tag>
-    </template>
-    <template #name-header="{ column }">
-      <s>{{ column.label }}</s>
-    </template>
-  </pro-crud>
-</template>
+::: demo
+@/demo/Crud/slots.vue
+:::
 
-<script>
-import { h, ref } from 'vue'
+### TypeScript
 
-export default {
-  setup() {
-    const form8 = ref({})
-    const serachForm8 = ref({})
-    const columns8 = ref([
-      {
-        label: 'Date',
-        prop: 'date',
-        component: 'el-input',
-        add: true,
-        edit: true,
-        search: true,
-        render: '--',
-        props: {
-          slots: {
-            suffix: () => h('i', { className: 'el-input__icon el-icon-date' }),
-          },
-        },
-      },
-      {
-        label: 'Name',
-        prop: 'name',
-        component: 'el-input',
-        add: true,
-        search: true,
-        slot: true,
-      },
-      {
-        label: 'Address',
-        prop: 'address',
-        component: 'el-input',
-        add: true,
-        edit: true,
-        render: (row) => h('em', null, row.address),
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
+The function `defineCrudColumns` supports passing in a Generics type to infer the value of `prop`
 
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form8,
-      serachForm8,
-      data,
-      columns8,
-      search,
-      submit,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/typescript.vue
 :::
 
 ### Props
@@ -1032,7 +178,6 @@ export default {
 | size                    | control the size of components in this form                                                                                                                                                                                                                                 | string                                                  | medium / small / mini                               | —                                                                              |
 | disabled                | whether to disabled all components in this form. If set to true, it cannot be overridden by its inner components' `disabled` prop                                                                                                                                           | boolean                                                 | —                                                   | false                                                                          |
 | gutter                  | grid spacing                                                                                                                                                                                                                                                                | number                                                  | —                                                   | 0                                                                              |
-| type                    | layout mode, you can use flex, works in modern browsers                                                                                                                                                                                                                     | string                                                  | —                                                   | —                                                                              |
 | justify                 | horizontal alignment of flex layout                                                                                                                                                                                                                                         | string                                                  | start / end / center / space-around / space-between | start                                                                          |
 | title                   | title of Dialog. Can also be passed with a named slot (see the following table)                                                                                                                                                                                             | string                                                  | —                                                   | reference `addText` or `editText` of menu                                      |
 | width                   | width of Dialog                                                                                                                                                                                                                                                             | string / number                                         | —                                                   | 50%                                                                            |
@@ -1190,20 +335,17 @@ Other attributes are the same as `Table columns`
 | resetFields        | reset all the fields and remove validation result                                                                                                                                                                                                                                | —                                                                          |
 | clearValidate      | clear validation message for certain fields. The parameter is prop name or an array of prop names of the form items whose validation messages will be removed. When omitted, all fields' validation messages will be cleared                                                     | Function(props: string \| array)                                           |
 
-::: tip Tip
-If you use `typescript`, you can export `ICrudExpose` from the component to provide better type inference
-:::
-
 ### Slots
 
 | Name                | Description                                                                                                                                                                                   |
 | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| menu-left           | control the menu left display content                                                                                                                                                         |
-| menu-right          | control the menu right display content                                                                                                                                                        |
-| table               | anything inserted before the menu of table                                                                                                                                                    |
+| menu-left           | control the menu left display content, parameters { size }                                                                                                                                    |
+| menu-right          | control the menu right display content, parameters { size }                                                                                                                                   |
+| action              | control the menu right of the menu display content, parameters { size }                                                                                                                       |
 | menu                | control the menu display content of table, parameters { size, row, column, $index }                                                                                                           |
 | expand              | control the expand display content, parameters { row, column, $index }                                                                                                                        |
 | append              | Contents to be inserted after the last row. You may need this slot if you want to implement infinite scroll for the table. This slot will be displayed above the summary row if there is one. |
+| table               | anything inserted before the menu of table                                                                                                                                                    |
 | table-[prop]        | control the `Item` display content of table, parameters { row, column, $index }                                                                                                               |
 | [prop]-header       | control the `Item` header display content of table, parameters { column, $index }                                                                                                             |
 | form                | anything inserted before the menu of form                                                                                                                                                     |
@@ -1213,8 +355,8 @@ If you use `typescript`, you can export `ICrudExpose` from the component to prov
 | [prop]-label        | control the `Item` label display content of form, parameters { item }                                                                                                                         |
 | [prop]-error        | control the `Item` error display content of form, parameters { error, item }                                                                                                                  |
 | search              | anything inserted before the menu of search                                                                                                                                                   |
-| search-menu-left    | control the menu left display content of search                                                                                                                                               |
-| search-menu-right   | control the menu right display content of search                                                                                                                                              |
+| search-menu-left    | control the menu left display content of search, parameters { loading }                                                                                                                       |
+| search-menu-right   | control the menu right display content of search, parameters { loading }                                                                                                                      |
 | search-[prop]       | control the `Item` display content of search, parameters { item, value, setValue }                                                                                                            |
 | search-[prop]-label | control the `Item` label display content of search, parameters { item }                                                                                                                       |
 | search-[prop]-error | control the `Item` error display content of search, parameters { error, item }                                                                                                                |

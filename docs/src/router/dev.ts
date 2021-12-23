@@ -1,12 +1,14 @@
+import { markRaw } from 'vue'
+import { Edit } from '@element-plus/icons-vue'
 import BaseLayout from '../layout/Layout.vue'
-import type { IRouteRecordRaw } from '/@src/index'
+import type { RouteRecordRaw } from 'vue-router'
 
-const routes: IRouteRecordRaw[] = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/dev/',
     redirect: '/dev/Layout',
     component: BaseLayout,
-    meta: { title: 'Development', icon: 'el-icon-edit' },
+    meta: { title: 'Development', icon: markRaw(Edit) },
     children: [
       {
         path: '/dev/Layout',

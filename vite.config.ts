@@ -5,11 +5,11 @@ import Markdown from 'vite-plugin-md'
 import container from 'markdown-it-container'
 import { VitePWA } from 'vite-plugin-pwa'
 import anchor from 'markdown-it-anchor'
-import highlight from './docs/src/plugin/highlight'
-import snippet from './docs/src/plugin/snippet'
-import demo from './docs/src/plugin/demo'
-import createContainer from './docs/src/plugin/create-container'
-import preWrapper from './docs/src/plugin/pre-wrapper'
+import highlight from './build/plugin/highlight'
+import snippet from './build/plugin/snippet'
+import demo from './build/plugin/demo'
+import createContainer from './build/plugin/create-container'
+import preWrapper from './build/plugin/pre-wrapper'
 import type Token from 'markdown-it/lib/token'
 
 export default defineConfig({
@@ -18,6 +18,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '/@src': resolve(__dirname, 'src'),
+      'element-pro-components': resolve(__dirname, 'src'),
     },
   },
   build: {
@@ -71,13 +72,24 @@ export default defineConfig({
     }),
     VitePWA({
       manifest: {
+        name: 'pro-components',
+        short_name: 'pro-components',
         description: 'a component library for Vue 3 base on element-plus',
         icons: [
           {
-            src: 'logo.svg',
-            sizes: '48x48 72x72 96x96 128x128 256x256',
+            src: '/element-pro-components/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: '/element-pro-components/android-chrome-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
           },
         ],
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
       },
     }),
   ],

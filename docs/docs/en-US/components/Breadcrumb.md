@@ -13,22 +13,15 @@ meta:
 
 ### Basic Use
 
-::: demo Will be auto generated according to the current routes
+Will be auto generated according to the current routes
 
-<template>
-  <pro-breadcrumb />
-</template>
-
-<script>
-export default {}
-</script>
-
+::: demo
+@/demo/Breadcrumb/base.vue
 :::
 
 ### Props
 
-| Name            | Description                  | Type   | Options | Default           |
-| :-------------- | :--------------------------- | :----- | :------ | :---------------- |
-| routes          | current routes               | array  | -       | from `vue-router` |
-| separator       | separator character          | string | -       | `/`               |
-| separator-class | class name of icon separator | string | -       | -                 |
+| Name           | Description                 | Type   | Options | Default |
+| :------------- | :-------------------------- | :----- | :------ | :------ |
+| separator      | separator character         | string | -       | `/`     |
+| separator-icon | icon name of icon separator | string | -       | -       |

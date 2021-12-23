@@ -13,145 +13,34 @@ meta:
 
 ### Basic Use
 
-::: demo Set `data` attribute will automatic generate options
+Set `data` attribute will automatic generate options
 
-<template>
-  <pro-checkbox
-    v-model="checkbox"
-    :data="data"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const checkbox = ref([])
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      checkbox,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Checkbox/base.vue
 :::
 
 ### Disabled State
 
-::: demo Set the `disabled` attribute in prop `data`
+Set the `disabled` attribute in prop `data`
 
-<template>
-  <pro-checkbox
-    v-model="checkbox1"
-    :data="list"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const checkbox1 = ref([])
-    const list = ref([
-      { value: 'Go', label: 'go', disabled: true },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      checkbox1,
-      list,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Checkbox/disabled.vue
 :::
 
 ### Configure key of binding data
 
-::: demo Set `config` attribute. `value`- v-model bind key; `label`- display key; `disabled`- Disabled key; `name`- name key
+Set `config` attribute. `value`- v-model bind key; `label`- display key; `disabled`- Disabled key; `name`- name key
 
-<template>
-  <pro-checkbox
-    v-model="checkbox2"
-    :data="data"
-    :config="config"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const checkbox2 = ref([])
-    const config = ref({ value: 'label', label: 'value' })
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      checkbox2,
-      config,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Checkbox/config.vue
 :::
 
 ### Button style
 
-::: demo use `pro-checkbox-button` then checkbox with button styles
+use `pro-checkbox-button` then checkbox with button styles
 
-<template>
-  <pro-checkbox-button
-    v-model="checkboxbutton"
-    :data="data"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const checkboxbutton = ref([])
-    const data = ref([
-      { value: 'Go', label: 'go' },
-      { value: 'JavaScript', label: 'javascript' },
-      { value: 'Python', label: 'python' },
-      { value: 'Dart', label: 'dart' },
-      { value: 'V', label: 'v' },
-    ])
-
-    return {
-      checkboxbutton,
-      data,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/CheckboxButton/base.vue
 :::
 
 ### Checkbox Props
@@ -174,7 +63,7 @@ export default {
 | ------ | --------------------------------------- | ----------------- |
 | change | triggers when the binding value changes | the updated value |
 
-### CheckboxButton
+## CheckboxButton
 
 > Checkbox with button styles
 

@@ -13,952 +13,98 @@ meta:
 
 ### 基础用法
 
-::: demo 传入 columns 数据，根据 `add` `edit` `form` `hide` `search` 自动生成多功能表格
+当 columns 绑定的是一个具有响应式的数组时，数组的变动会影响 Crud 变动（及动态 Crud）。如果不需要动态 Crud 推荐绑定一个普通数组
 
-<template>
-  <pro-crud
-    v-model="form"
-    v-model:search="serachForm"
-    :columns="columns"
-    :menu="{ label: '操作' }"
-    :data="data"
-    @search="search"
-    @submit="submit"
-    @delete="deleteRow"
-  />
-</template>
+::: demo 根据 `add` `edit` `form` `hide` `search` 自动生成多功能表格
+@/demo/Crud/base.vue
+:::
 
-<script>
-import { ref } from 'vue'
+### 智能提示
 
-export default {
-  setup() {
-    const form = ref({})
-    const serachForm = ref({})
-    const columns = ref([
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-input',
-        add: true,
-        edit: true,
-        search: true,
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-        add: true,
-        search: true,
-      },
-      {
-        label: '地址',
-        prop: 'address',
-        component: 'el-input',
-        add: true,
-        edit: true,
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
+通过辅助函数 `defineCrudColumns` `defineCrudMenuColumns` `defineCrudBeforeOpen` `defineCrudBeforeClose` `defineCrudSearch` `defineCrudSubmit` 提供智能提示
 
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
+::: demo
+@/demo/Crud/define.vue
+:::
 
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
+### 嵌套键值
 
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form,
-      serachForm,
-      data,
-      columns,
-      search,
-      submit,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/nested.vue
 :::
 
 ### 配置按钮
 
-::: demo 默认不显示新增、编辑、删除按钮，需要通过 `menu` 传入 `true` 或者 menu 的相关配置才会显示
+默认不显示新增、编辑、删除按钮，需要配置 menu 或者启用 menu 插槽时才会显示
 
-<template>
-  <pro-crud
-    v-model="form1"
-    v-model:search="serachForm1"
-    :columns="columns1"
-    :menu="menu"
-    :data="data"
-    @search="search"
-    @searchReset="reset"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
+按钮也可以通过 <pro-link to="/zh-CN/guide/#全局配置">全局配置</pro-link> 或者 <pro-link to="/zh-CN/guide/i18n">国际化</pro-link> 来配置
 
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const menu = ref({
-      label: '操作',
-      addText: '新增',
-      editText: '修改',
-      delText: '删除',
-      searchText: '搜索',
-      searchResetText: '重置',
-      submitText: '提交',
-      resetText: '重置',
-      edit: (row) => row.date !== '2016-05-02',
-      del: (row) => row.date !== '2016-05-04',
-      searchReset: false,
-      editProps: { type: 'default', plain: true },
-      delProps: { type: 'danger', plain: true },
-    })
-    const form1 = ref({})
-    const serachForm1 = ref({})
-    const columns1 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-input',
-        form: true,
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-        form: true,
-        search: true,
-      },
-      {
-        label: '地址',
-        prop: 'address',
-        component: 'el-input',
-        form: true,
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form1,
-      serachForm1,
-      columns,
-      menu,
-      data,
-      search,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/menu.vue
 :::
 
 ### 指定搜索表单
 
-::: demo 通过 `form-columns` 传入的配置直接作用于搜索表单，类型同 Form columns
+通过 `search-columns` 传入的配置直接作用于搜索表单，类型同 Form columns
 
-<template>
-  <pro-crud
-    v-model:search="serachForm2"
-    :columns="columns2"
-    :search-columns="searchColumns"
-    @search="search"
-    @searchReset="reset"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const serachForm2 = ref({})
-    const columns2 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-      },
-      {
-        label: '地址',
-        prop: 'address',
-      },
-    ])
-    const searchColumns = ref([
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '至',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-        }
-      }
-    ])
-
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset search')
-    }
-
-    return {
-      serachForm2,
-      columns1,
-      search,
-      reset,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/search.vue
 :::
 
 ### 指定新增表单
 
-::: demo 通过 `add-columns` 传入的配置直接作用于新增表单，类型同 Form columns
+通过 `add-columns` 传入的配置直接作用于新增表单，类型同 Form columns
 
-<template>
-  <pro-crud
-    v-model="form3"
-    :columns="columns2"
-    :add-columns="addColumns"
-    :menu="true"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form3 = ref({})
-    const columns2 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-      },
-      {
-        label: '地址',
-        prop: 'address',
-      },
-    ])
-    const addColumns = ref([
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '至',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-        }
-      }
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    return {
-      form3,
-      columns2,
-      addColumns,
-      submit,
-      reset,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/add.vue
 :::
 
 ### 指定编辑表单
 
-::: demo 通过 `edit-columns` 传入的配置直接作用于新增表单，类型同 Form columns
+通过 `edit-columns` 传入的配置直接作用于新增表单，类型同 Form columns
 
-<template>
-  <pro-crud
-    v-model="form4"
-    :columns="columns4"
-    :edit-columns="editColumns"
-    :menu="true"
-    :data="data"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form4 = ref({})
-    const columns4 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-input',
-        add: true,
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-      },
-      {
-        label: '地址',
-        prop: 'address',
-      },
-    ])
-    const editColumns = ref([
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '至',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-        }
-      }
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form4,
-      columns4,
-      editColumns,
-      data,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/edit.vue
 :::
 
 ### 指定表单
 
-::: demo 通过 `form-columns` 传入的配置直接作用于新增和编辑表单，类型同 Form columns
+通过 `form-columns` 传入的配置直接作用于新增和编辑表单，类型同 Form columns
 
-<template>
-  <pro-crud
-    v-model="form5"
-    :columns="columns2"
-    :form-columns="formColumns"
-    :menu="true"
-    :data="data"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form5 = ref({})
-    const columns2 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-      },
-      {
-        label: '地址',
-        prop: 'address',
-      },
-    ])
-    const formColumns = ref([
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-      },
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-date-picker',
-        props: {
-          type: 'datetimerange',
-          rangeSeparator: '至',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-        }
-      }
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form5,
-      columns2,
-      formColumns,
-      data,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/form.vue
 :::
 
 ### 指定表格
 
-::: demo 通过 `table-columns` 传入的配置直接作用于表格，类型同 Table columns
+通过 `table-columns` 传入的配置直接作用于表格，类型同 Table columns
 
-<template>
-  <pro-crud
-    v-model="form6"
-    v-model:search="serachForm6"
-    :columns="columns6"
-    :table-columns="tableColumns"
-    :menu="{ label: '操作' }"
-    :data="data"
-    label-width="100px"
-    @submit="submit"
-    @reset="reset"
-    @delete="deleteRow"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form6 = ref({})
-    const serachForm6 = ref({})
-    const columns6 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-input',
-        form: true,
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-        form: true,
-        search: true,
-      },
-      {
-        label: '地址',
-        prop: 'address',
-        component: 'el-input',
-      },
-    ])
-    const tableColumns = ref([
-      {
-        label: '日期',
-        prop: 'date',
-      },
-      {
-        label: '用户',
-        children: [
-          {
-            label: '姓名',
-            prop: 'name',
-          },
-          {
-            label: '地址',
-            prop: 'address',
-          },
-        ],
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const reset = () => {
-      console.log('reset')
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form6,
-      serachForm6,
-      columns6,
-      tableColumns,
-      data,
-      submit,
-      reset,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/table.vue
 :::
 
 ### 弹窗前后
 
-::: demo 通过 `before-open` `before-close` 指定弹窗开启前与弹窗关闭前执行的操作
+通过 `before-open` `before-close` 指定弹窗开启前与弹窗关闭前执行的操作
 
-<template>
-  <pro-crud
-    v-model="form7"
-    :columns="columns7"
-    :menu="{ label: '操作' }"
-    :data="data"
-    :before-open="beforeOpen"
-    :before-close="beforeClose"
-  />
-</template>
-
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const form7 = ref({})
-    const columns7 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-input',
-        form: true,
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-      },
-      {
-        label: '地址',
-        prop: 'address',
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
-
-    function beforeOpen(done, type, row) {
-      console.log('beforeOpen', type, row)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    function beforeClose(done) {
-      console.log('beforeClose')
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    return {
-      form7,
-      columns7,
-      data,
-      beforeOpen,
-      beforeClose,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/dialog.vue
 :::
 
 ### 插槽
 
-::: demo 通过 columns 的 slot 配置是否开启自定义插槽功能。开启后可以使用带 `[prop]` 相关的插槽，否则只有不带 `[prop]` 的插槽生效
+在 `columns` 中配置 `render` 可以使用简单的 <pro-link to="https://v3.cn.vuejs.org/guide/render-function.html">渲染函数</pro-link>。或者直接在模版中增加带 `[prop]` 相关的插槽
 
-<template>
-  <pro-crud
-    v-model="form8"
-    v-model:search="serachForm8"
-    :columns="columns8"
-    :menu="{ label: '操作' }"
-    :data="data"
-    selection
-    @search="search"
-    @submit="submit"
-    @delete="deleteRow"
-  >
-    <template #menu-right="{ size }">
-      <el-button
-        :size="size"
-        type="danger"
-      >
-        删除
-      </el-button>
-    </template>
-    <template #menu="{ size }">
-      <el-button
-        :size="size"
-        type="text"
-      >
-        详情
-      </el-button>
-    </template>
-    <template #form-name>
-      <span>form slot</span>
-    </template>
-    <template #table-name="{ row, size }">
-      <el-tag :size="size">
-        {{ row?.name }}
-      </el-tag>
-    </template>
-    <template #name-header="{ column }">
-      <s>{{ column.label }}</s>
-    </template>
-  </pro-crud>
-</template>
+::: demo
+@/demo/Crud/slots.vue
+:::
 
-<script>
-import { h, ref } from 'vue'
+### TypeScript
 
-export default {
-  setup() {
-    const form8 = ref({})
-    const serachForm8 = ref({})
-    const columns8 = ref([
-      {
-        label: '日期',
-        prop: 'date',
-        component: 'el-input',
-        add: true,
-        edit: true,
-        search: true,
-        render: '--',
-        props: {
-          slots: {
-            suffix: () => h('i', { className: 'el-input__icon el-icon-date' }),
-          },
-        },
-      },
-      {
-        label: '姓名',
-        prop: 'name',
-        component: 'el-input',
-        add: true,
-        search: true,
-        slot: true,
-      },
-      {
-        label: '地址',
-        prop: 'address',
-        component: 'el-input',
-        add: true,
-        edit: true,
-        render: (row) => h('em', null, row.address),
-      },
-    ])
-    const data = ref([
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ])
+`defineCrudColumns` 支持传入一个泛型用来推断 `prop` 值
 
-    const search = (done, isValid, invalidFields) => {
-      console.log('search', isValid, invalidFields)
-      setTimeout(() => {
-        done()
-      }, 1000)
-    }
-
-    const submit = (close, done, formType, isValid, invalidFields) => {
-      console.log('submit', formType, isValid, invalidFields)
-      setTimeout(() => {
-        isValid ? close() : done()
-      }, 1000)
-    }
-
-    const deleteRow = (row) => {
-      console.log('deleteRow', row)
-    }
-
-    return {
-      form8,
-      serachForm8,
-      data,
-      columns8,
-      search,
-      submit,
-      deleteRow,
-    }
-  }
-}
-</script>
-
+::: demo
+@/demo/Crud/typescript.vue
 :::
 
 ### 配置
@@ -1032,7 +178,6 @@ export default {
 | size                    | 用于控制该表单内组件的尺寸                                              | string                                                  | medium / small / mini                               | -                                                    |
 | disabled                | 是否禁用该表单内的所有组件                                              | boolean                                                 | -                                                   | false                                                |
 | gutter                  | 栅格间隔                                                                | number                                                  | -                                                   | 0                                                    |
-| type                    | 布局模式，可选 flex，现代浏览器下有效                                   | string                                                  | -                                                   | -                                                    |
 | justify                 | flex 布局下的水平排列方式                                               | string                                                  | start / end / center / space-around / space-between | start                                                |
 | title                   | 弹窗的标题                                                              | string                                                  | —                                                   | 同 menu addText / editText                           |
 | width                   | 弹窗的宽度                                                              | string / number                                         | —                                                   | 50%                                                  |
@@ -1190,21 +335,17 @@ export default {
 | resetFields        | 对整个表单进行重置，将所有字段值重置为初始值并移除校验结果                                                                                                           | -                                                                          |
 | clearValidate      | 移除表单项的校验结果。传入待移除的表单项的 prop 属性或者 prop 组成的数组，如不传则移除整个表单的校验结果                                                             | Function(props: array \| string)                                           |
 
-::: tip 提示
-如果使用 `typescript` 可以从组件中导出 `ICrudExpose` 提供更好的类型推导
-:::
-
 ### 插槽
 
 | name                | 说明                                                                     |
 | :------------------ | :----------------------------------------------------------------------- |
-| menu-left           | 新增按钮左侧                                                             |
-| menu-right          | 新增按钮右侧                                                             |
-| action              | 头部右侧操作栏                                                           |
-| table               | 在表格右侧菜单前插入的任意内容                                           |
+| menu-left           | 新增按钮左侧，参数为 { size }                                            |
+| menu-right          | 新增按钮右侧，参数为 { size }                                            |
+| action              | 头部右侧操作栏，参数为 { size }                                          |
 | menu                | 表格右侧自定义按钮，参数为 { size, row, column, $index }                 |
 | expand              | 当 expand 为 true 时，配置展开显示的内容，参数为 { row, column, $index } |
 | append              | 插入至表格最后一行之后的内容                                             |
+| table               | 在表格右侧菜单前插入的任意内容                                           |
 | table-[prop]        | 当前这列的内容，参数为 { row, column, $index }                           |
 | [prop]-header       | 当前这列表头的内容，参数为 { column, $index }                            |
 | form                | 在表单底部按钮前插入的任意内容                                           |
@@ -1214,8 +355,8 @@ export default {
 | [prop]-label        | 当前这项的标签文本的内容，参数为 { item }                                |
 | [prop]-error        | 当前这项的自定义表单校验信息的显示方式，参数为 { error, item }           |
 | search              | 在搜索按钮菜单前插入的任意内容                                           |
-| search-menu-left    | 搜索表单按钮左侧                                                         |
-| search-menu-right   | 搜索表单按钮右侧                                                         |
+| search-menu-left    | 搜索表单按钮左侧，参数为 { loading }                                     |
+| search-menu-right   | 搜索表单按钮右侧，参数为 { loading }                                     |
 | search-[prop]       | 当前这项的 Form Item 的内容，参数为 { item, value, setValue }            |
 | search-[prop]-label | 当前这项的标签文本的内容，参数为 { item }                                |
 | search-[prop]-error | 当前这项的自定义表单校验信息的显示方式，参数为 { error, item }           |
